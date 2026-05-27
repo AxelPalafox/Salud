@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VitalCheck | Mi Salud</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-bg: #0f172a;
+            --accent-color: #38bdf8;
+            --success-neon: #4ade80;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: radial-gradient(circle at top right, #1e293b, #0f172a);
+            color: #f1f5f9;
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+
+        /* Contenedor tipo App */
+        .app-container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Cabecera */
+        .header {
+            text-align: left;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            font-weight: 700;
+            font-size: 2rem;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Tarjetas Estilo Glass */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+        }
+
+        /* Selectores Personalizados */
+        .option-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .option-item {
+            background: rgba(255,255,255,0.03);
+            border: 1.5px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option-item i {
+            display: block;
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+
+        .option-item.active {
+            background: rgba(56, 189, 248, 0.2);
+            border-color: var(--accent-color);
+            transform: translateY(-3px);
+        }
+
+        /* Botones Neón */
+        .btn-neon {
+            background: linear-gradient(135deg, #38bdf8, #2563eb);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            padding: 16px;
+            font-weight: 600;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+            transition: 0.3s;
+        }
+
+        .btn-neon:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.6);
+        }
+
+        /* Ejercicios Sugeridos */
+        .exercise-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .exercise-info h6 {
+            font-weight: 600;
+            margin: 0;
+            color: #fff;
+        }
+
+        .exercise-info span {
+            font-size: 0.85rem;
+            color: var(--accent-color);
+        }
+
+        .btn-play {
+            width: 40px;
+            height: 40px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-bg);
+            text-decoration: none;
+        }
+
+        .loader {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="header">
+        <p class="mb-1 text-uppercase small ls-2" style="color: var(--accent-color); letter-spacing: 2px;">Hola de nuevo</p>
+        <h1>VitalCheck</h1>
+    </div>
+
+    <div id="form-section">
+        <div class="glass-card">
+            <h5 class="mb-4"><i class="fa-solid fa-bolt me-2" style="color: #fbbf24;"></i>¿Energía actual?</h5>
+            <div class="option-grid" id="energy-options">
+                <div class="option-item" data-val="1" onclick="selectOption('energy', this)">
+                    <i class="fa-solid fa-battery-quarter"></i>
+                    <span>Baja</span>
+                </div>
+                <div class="option-item active" data-val="2" onclick="selectOption('energy', this)">
+                    <i class="fa-solid fa-battery-half"></i>
+                    <span>Media</span>
+                </div>
+                <div class="option-item" data-val="3" onclick="selectOption('energy', this)">
+                    <i class="fa-solid fa-battery-full"></i>
+                    <span>Alta</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card">
+            <h5 class="mb-4"><i class="fa-solid fa-hand-dots me-2" style="color: #f87171;"></i>¿Alguna molestia?</h5>
+            <select id="pain-area" class="form-select bg-dark text-white border-0 py-3" style="border-radius: 12px; background-color: rgba(255,255,255,0.05) !important;">
+                <option value="Ninguno">Todo bien 👍</option>
+                <option value="Espalda">Espalda / Lumbar</option>
+                <option value="Piernas">Piernas / Rodillas</option>
+                <option value="Hombros">Hombros / Cuello</option>
+            </select>
+        </div>
+
+        <button class="btn-neon mb-4" onclick="processData()" id="main-btn">
+            GENERAR MI RUTINA <i class="fa-solid fa-arrow-right ms-2"></i>
+        </button>
+        
+        <div class="loader text-info" id="loader">
+            <div class="spinner-border" role="status"></div>
+            <p class="mt-2">Analizando tu estado...</p>
+        </div>
+    </div>
+
+    <div id="results-section" class="d-none">
+        <h5 class="mb-4"><i class="fa-solid fa-dumbbell me-2 text-success"></i>Tu Rutina de Hoy</h5>
+        <div id="exercise-list">
+            </div>
+        <button class="btn btn-link text-white-50 w-100 mt-3" onclick="location.reload()">
+            <i class="fa-solid fa-rotate-left me-2"></i>Nuevo chequeo
+        </button>
+    </div>
+</div>
+
+<script>
+    let selectedEnergy = 2;
+
+    function selectOption(type, element) {
+        // Quitar clase active de los hermanos
+        const options = element.parentElement.querySelectorAll('.option-item');
+        options.forEach(opt => opt.classList.remove('active'));
+        // Añadir a este
+        element.classList.add('active');
+        selectedEnergy = element.getAttribute('data-val');
+    }
+
+    function processData() {
+        const btn = document.getElementById('main-btn');
+        const loader = document.getElementById('loader');
+        const pain = document.getElementById('pain-area').value;
+
+        btn.style.display = 'none';
+        loader.style.display = 'block';
+
+        const payload = {
+            energia: selectedEnergy,
+            dolor: pain,
+            notas: "Registro desde VitalCheck Premium"
+        };
+
+        google.script.run
+            .withSuccessHandler(showExercises)
+            .guardarChequeo(payload);
+    }
+
+    function showExercises(list) {
+        document.getElementById('form-section').classList.add('d-none');
+        document.getElementById('results-section').classList.remove('d-none');
+        
+        const container = document.getElementById('exercise-list');
+        container.innerHTML = "";
+
+        if (list.length === 0) {
+            container.innerHTML = `<div class="glass-card text-center">Hoy es buen día para descansar profundamente. 🧘‍♂️</div>`;
+            return;
+        }
+
+        list.forEach(ex => {
+            const card = `
+                <div class="exercise-card">
+                    <div class="exercise-info">
+                        <h6>${ex.nombre}</h6>
+                        <span><i class="fa-solid fa-tag me-1"></i>${ex.zona}</span>
+                    </div>
+                    ${ex.link ? `<a href="${ex.link}" target="_blank" class="btn-play"><i class="fa-solid fa-play"></i></a>` : ''}
+                </div>
+            `;
+            container.innerHTML += card;
+        });
+    }
+</script>
+
+</body>
+</html>
