@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VitalCheck | Mi Salud</title>
+    <title>VitalCheck Pro | Mi Salud</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -22,7 +22,7 @@
             min-height: 100vh; 
             padding: 20px 0;
         }
-        .app-container { max-width: 480px; margin: 0 auto; padding: 0 15px; }
+        .app-container { max-width: 480px; margin: 0 auto; padding: 0 15px 80px 15px; }
         .header h1 { font-weight: 700; font-size: 2rem; background: linear-gradient(to right, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .frase-dia { font-size: 0.95rem; font-style: italic; color: #94a3b8; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; margin-bottom: 25px; border-left: 3px solid #818cf8; }
         .glass-card { background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 25px; margin-bottom: 20px; }
@@ -38,6 +38,13 @@
         .loader { display: none; text-align: center; margin: 20px 0; }
         .form-control, .form-select { background-color: rgba(255,255,255,0.05) !important; border: 1px solid var(--glass-border) !important; color: white !important; border-radius: 12px; padding: 12px; }
         .form-control::placeholder { color: #64748b; }
+        
+        /* BARRA DE NAVEGACIÓN INFERIOR estilo App Móvil */
+        .nav-bar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); border-top: 1px solid var(--glass-border); display: flex; justify-content: space-around; padding: 12px 0; z-index: 1000; }
+        .nav-item { text-align: center; color: #64748b; cursor: pointer; font-size: 0.8rem; transition: 0.3s; flex: 1; }
+        .nav-item i { display: block; font-size: 1.3rem; margin-bottom: 3px; }
+        .nav-item.active { color: var(--accent-color); }
+        .historial-item { background: rgba(255,255,255,0.02); padding: 15px; border-radius: 15px; margin-bottom: 10px; border: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; }
     </style>
 </head>
 <body>
@@ -51,113 +58,126 @@
         </div>
         <div class="glass-card">
             <h4 class="mb-4 fw-bold text-center"><i class="fa-solid fa-user-lock me-2 text-info"></i>Iniciar Sesión</h4>
-            <div class="mb-3">
-                <input type="email" id="login-email" class="form-control" placeholder="Correo electrónico">
-            </div>
-            <div class="mb-4">
-                <input type="password" id="login-pass" class="form-control" placeholder="Contraseña">
-            </div>
+            <div class="mb-3"><input type="email" id="login-email" class="form-control" placeholder="Correo electrónico"></div>
+            <div class="mb-3"><input type="password" id="login-pass" class="form-control" placeholder="Contraseña"></div>
+            <p class="text-end small mb-4"><a href="#" onclick="showScreen('recover')" class="text-info text-decoration-none">¿Olvidaste tu contraseña?</a></p>
             <button class="btn-neon mb-3" onclick="login()">INGRESAR</button>
-            <p class="text-center mb-0 small">¿No tienes cuenta? <a href="#" onclick="toggleAuthScreens('register')" class="text-info text-decoration-none fw-bold">Regístrate aquí</a></p>
+            <p class="text-center mb-0 small">¿No tienes cuenta? <a href="#" onclick="showScreen('register')" class="text-info text-decoration-none fw-bold">Regístrate aquí</a></p>
+        </div>
+    </div>
+
+    <div id="recover-section" class="d-none">
+        <div class="glass-card">
+            <h4 class="mb-3 fw-bold"><i class="fa-solid fa-key me-2 text-warning"></i>Recuperar Acceso</h4>
+            <p class="text-muted small">Ingresa tu correo y te enviaremos tu contraseña por mensaje automático.</p>
+            <div class="mb-4"><input type="email" id="recover-email" class="form-control" placeholder="Tu correo electrónico"></div>
+            <button class="btn-neon mb-3" onclick="recoverPassword()">RECUPERAR CONTRASEÑA</button>
+            <p class="text-center mb-0 small"><a href="#" onclick="showScreen('login')" class="text-muted text-decoration-none"><i class="fa-solid fa-arrow-left me-2"></i>Volver al Login</a></p>
         </div>
     </div>
 
     <div id="register-section" class="d-none">
-        <div class="header mb-4">
-            <h1>Crear Cuenta</h1>
-            <p class="text-muted">Completa tu perfil de salud</p>
-        </div>
+        <div class="header mb-4"><h1>Crear Cuenta</h1><p class="text-muted">Completa tu perfil de salud</p></div>
         <div class="glass-card">
             <h5 class="mb-3 fw-bold text-info"><i class="fa-solid fa-id-card me-2"></i>Datos de Acceso</h5>
             <div class="mb-3"><input type="text" id="reg-name" class="form-control" placeholder="Nombre completo"></div>
             <div class="mb-3"><input type="email" id="reg-email" class="form-control" placeholder="Correo electrónico"></div>
-            <div class="mb-4"><input type="password" id="reg-pass" class="form-control" placeholder="Contraseña básica"></div>
+            <div class="mb-4"><input type="password" id="reg-pass" class="form-control" placeholder="Contraseña"></div>
 
             <h5 class="mb-3 fw-bold text-success"><i class="fa-solid fa-heart-pulse me-2"></i>Indicadores de Salud</h5>
             <div class="row mb-3">
-                <div class="col"><input type="number" id="reg-age" class="form-control" placeholder="Edad (Años)"></div>
+                <div class="col"><input type="number" id="reg-age" class="form-control" placeholder="Edad"></div>
                 <div class="col"><input type="number" id="reg-weight" class="form-control" placeholder="Peso (kg)"></div>
             </div>
-            <div class="mb-3"><input type="tel" id="reg-phone" class="form-control" placeholder="Teléfono (ej. +521234...)"></div>
+            <div class="mb-3"><input type="tel" id="reg-phone" class="form-control" placeholder="Teléfono"></div>
             <div class="mb-4">
-                <label class="form-label small text-muted">¿Cuál es tu objetivo principal?</label>
                 <select id="reg-goal" class="form-select">
                     <option value="Mejorar salud general">Mejorar salud general</option>
                     <option value="Bajar de peso">Bajar de peso / Definición</option>
                     <option value="Ganar masa muscular">Ganar masa muscular</option>
-                    <option value="Aliviar dolores musculares">Aliviar dolores musculares</option>
                 </select>
             </div>
-
-            <button class="btn-neon mb-3" onclick="register()">REGISTRARME Y EMPEZAR</button>
-            <p class="text-center mb-0 small">¿Ya tienes cuenta? <a href="#" onclick="toggleAuthScreens('login')" class="text-info text-decoration-none fw-bold">Inicia sesión</a></p>
+            <button class="btn-neon mb-3" onclick="register()">REGISTRARME</button>
+            <p class="text-center mb-0 small">¿Ya tienes cuenta? <a href="#" onclick="showScreen('login')" class="text-info text-decoration-none fw-bold">Inicia sesión</a></p>
         </div>
     </div>
 
     <div id="main-app-section" class="d-none">
         <div class="header d-flex justify-content-between align-items-center mb-3">
-            <div>
-                <p class="mb-1 text-uppercase small" style="color: var(--accent-color); letter-spacing: 2px;" id="welcome-user">Hola</p>
-                <h1>VitalCheck</h1>
-            </div>
+            <div><p class="mb-1 text-uppercase small style='color: var(--accent-color)'" id="welcome-user">Hola</p><h1>VitalCheck</h1></div>
             <button class="btn btn-sm btn-outline-danger border-0" onclick="logout()"><i class="fa-solid fa-power-off"></i></button>
         </div>
 
-        <div class="frase-dia" id="frase-container">
-            <i class="fa-solid fa-spinner fa-spin me-2"></i> Cargando inspiración...
-        </div>
-
-        <div id="form-section">
-            <div class="glass-card">
-                <h5 class="mb-4"><i class="fa-solid fa-bolt me-2" style="color: #fbbf24;"></i>¿Energía actual?</h5>
-                <div class="option-grid">
-                    <div class="option-item" data-val="1" onclick="selectEnergyOption(this)"><i class="fa-solid fa-battery-quarter"></i><span>Baja</span></div>
-                    <div class="option-item active" data-val="2" onclick="selectEnergyOption(this)"><i class="fa-solid fa-battery-half"></i><span>Media</span></div>
-                    <div class="option-item" data-val="3" onclick="selectEnergyOption(this)"><i class="fa-solid fa-battery-full"></i><span>Alta</span></div>
+        <div id="tab-chequeo">
+            <div class="frase-dia" id="frase-container">Cargando inspiración...</div>
+            <div id="form-section">
+                <div class="glass-card">
+                    <h5><i class="fa-solid fa-bolt me-2 text-warning"></i>¿Energía actual?</h5>
+                    <div class="option-grid">
+                        <div class="option-item" data-val="1" onclick="selectEnergyOption(this)"><i class="fa-solid fa-battery-quarter"></i><span>Baja</span></div>
+                        <div class="option-item active" data-val="2" onclick="selectEnergyOption(this)"><i class="fa-solid fa-battery-half"></i><span>Media</span></div>
+                        <div class="option-item" data-val="3" onclick="selectEnergyOption(this)"><i class="fa-solid fa-battery-full"></i><span>Alta</span></div>
+                    </div>
                 </div>
+                <div class="glass-card">
+                    <h5><i class="fa-solid fa-hand-dots me-2 text-danger"></i>¿Alguna molestia?</h5>
+                    <select id="pain-area" class="form-select">
+                        <option value="Ninguno">Todo bien 👍</option>
+                        <option value="Espalda">Espalda / Lumbar</option>
+                        <option value="Piernas">Piernas / Rodillas</option>
+                        <option value="Hombros">Hombros / Cuello</option>
+                    </select>
+                </div>
+                <button class="btn-neon mb-4" onclick="processChequeo()">GENERAR MI RUTINA</button>
             </div>
+            <div id="results-section" class="d-none">
+                <h5 class="mb-3"><i class="fa-solid fa-dumbbell text-success me-2"></i>Tu Rutina Recomendada</h5>
+                <div id="exercise-list"></div>
+                <button class="btn btn-link text-white-50 w-100 mt-2" onclick="resetChequeoForm()">Hacer otro chequeo</button>
+            </div>
+        </div>
 
+        <div id="tab-historial" class="d-none">
+            <h4 class="mb-4 fw-bold"><i class="fa-solid fa-calendar-week me-2 text-info"></i>Mi Historial</h4>
+            <div id="historial-list"></div>
+        </div>
+
+        <div id="tab-perfil" class="d-none">
+            <h4 class="mb-4 fw-bold"><i class="fa-solid fa-user-gear me-2 text-success"></i>Mi Perfil</h4>
             <div class="glass-card">
-                <h5 class="mb-4"><i class="fa-solid fa-hand-dots me-2" style="color: #f87171;"></i>¿Alguna molestia?</h5>
-                <select id="pain-area" class="form-select">
-                    <option value="Ninguno">Todo bien 👍</option>
-                    <option value="Espalda">Espalda / Lumbar</option>
-                    <option value="Piernas">Piernas / Rodillas</option>
-                    <option value="Hombros">Hombros / Cuello</option>
-                </select>
+                <div class="mb-3"><label class="small text-muted">Correo electrónico (No modificable)</label><input type="text" id="perf-email" class="form-control" disabled></div>
+                <div class="mb-3"><label class="small text-muted">Mi Peso Actual (kg)</label><input type="number" id="perf-weight" class="form-control"></div>
+                <div class="mb-4"><label class="small text-muted">Mi Objetivo Físico</label>
+                    <select id="perf-goal" class="form-select">
+                        <option value="Mejorar salud general">Mejorar salud general</option>
+                        <option value="Bajar de peso">Bajar de peso / Definición</option>
+                        <option value="Ganar masa muscular">Ganar masa muscular</option>
+                    </select>
+                </div>
+                <button class="btn-neon" onclick="updateProfile()">GUARDAR CAMBIOS</button>
             </div>
-
-            <button class="btn-neon mb-4" onclick="processChequeo()" id="main-btn">
-                GENERAR MI RUTINA <i class="fa-solid fa-arrow-right ms-2"></i>
-            </button>
-        </div>
-
-        <div id="results-section" class="d-none">
-            <h5 class="mb-4"><i class="fa-solid fa-dumbbell me-2 text-success"></i>Tu Rutina de Hoy</h5>
-            <div id="exercise-list"></div>
-            <button class="btn btn-link text-white-50 w-100 mt-3" onclick="resetChequeoForm()">
-                <i class="fa-solid fa-rotate-left me-2"></i>Nuevo chequeo diario
-            </button>
         </div>
     </div>
 
-    <div class="loader text-info" id="global-loader">
-        <div class="spinner-border" role="status"></div>
-        <p class="mt-2" id="loader-text">Conectando con el servidor...</p>
+    <div id="nav-bar" class="nav-bar d-none">
+        <div class="nav-item active" onclick="switchTab('chequeo')"><i class="fa-solid fa-heart-pulse"></i><span>Chequeo</span></div>
+        <div class="nav-item" onclick="switchTab('historial')"><i class="fa-solid fa-calendar-days"></i><span>Historial</span></div>
+        <div class="nav-item" onclick="switchTab('perfil')"><i class="fa-solid fa-user"></i><span>Perfil</span></div>
     </div>
+
+    <div class="loader text-info" id="global-loader"><div class="spinner-border"></div><p class="mt-2" id="loader-text">Conectando...</p></div>
 
 </div>
 
 <script>
     // ========================================================
-    // ⚠️ REEMPLAZA ESTA URL CON TU URL REAL DE APPS SCRIPT
+    // ⚠️ REEMPLAZA ESTA URL CON LA DE TU APPS SCRIPT NUEVO
     // ========================================================
-    const API_URL = 'https://script.google.com/macros/s/AKfycbyylRqlaJlcPJ_ryXtZnsnhPTxf38_A5-VqJ24pP1Dad3dt8skIB6coGdf9vugXGIuC9A/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbwdkbgQ5ytCDx_XaISQkCVO_Wkl01Vra4Ws29I6cyaP/dev';
 
     let selectedEnergy = 2;
     let currentUser = null;
 
-    // Verificar sesión al cargar la página
     window.onload = function() {
         const session = localStorage.getItem('vitalcheck_session');
         if (session) {
@@ -171,75 +191,42 @@
     function showScreen(screenId) {
         document.getElementById('login-section').classList.add('d-none');
         document.getElementById('register-section').classList.add('d-none');
+        document.getElementById('recover-section').classList.add('d-none');
         document.getElementById('main-app-section').classList.add('d-none');
+        document.getElementById('nav-bar').classList.add('d-none');
         document.getElementById('global-loader').style.display = 'none';
-        
-        if(screenId) {
-            document.getElementById(screenId + '-section').classList.remove('d-none');
-        }
+        if(screenId) document.getElementById(screenId + '-section').classList.remove('d-none');
     }
 
-    function toggleAuthScreens(target) {
-        showScreen(target);
+    function switchTab(tabId) {
+        document.getElementById('tab-chequeo').classList.add('d-none');
+        document.getElementById('tab-historial').classList.add('d-none');
+        document.getElementById('tab-perfil').classList.add('d-none');
+        document.getElementById('tab-' + tabId).classList.remove('d-none');
+        
+        const items = document.querySelectorAll('.nav-item');
+        items.forEach(i => i.classList.remove('active'));
+        
+        const index = tabId === 'chequeo' ? 0 : tabId === 'historial' ? 1 : 2;
+        items[index].classList.add('active');
+
+        if(tabId === 'historial') loadHistorial();
+        if(tabId === 'perfil') loadPerfilData();
     }
 
     function selectEnergyOption(element) {
-        const options = element.parentElement.querySelectorAll('.option-item');
-        options.forEach(opt => opt.classList.remove('active'));
+        element.parentElement.querySelectorAll('.option-item').forEach(opt => opt.classList.remove('active'));
         element.classList.add('active');
         selectedEnergy = element.getAttribute('data-val');
     }
 
-    // ACCIÓN: REGISTRO DE USUARIO
-    function register() {
-        const nombre = document.getElementById('reg-name').value;
-        const correo = document.getElementById('reg-email').value;
-        const password = document.getElementById('reg-pass').value;
-        const edad = document.getElementById('reg-age').value;
-        const peso = document.getElementById('reg-weight').value;
-        const telefono = document.getElementById('reg-phone').value;
-        const objetivo = document.getElementById('reg-goal').value;
-
-        if(!nombre || !correo || !password) {
-            alert("Por favor llena los campos de nombre, correo y contraseña.");
-            return;
-        }
-
-        showLoader("Creando tu cuenta y enviando correo...");
-
-        const payload = {
-            accion: 'registro',
-            nombre, correo, password, edad, peso, telefono, objetivo
-        };
-
-        enviarPeticion(payload, function(data) {
-            if(data.exito) {
-                alert("¡Registro exitoso! Revisa tu bandeja de correo (e incluso spam) para ver tu bienvenida.");
-                localStorage.setItem('vitalcheck_session', JSON.stringify(data.usuario));
-                currentUser = data.usuario;
-                initMainApp();
-            } else {
-                alert(data.mensaje);
-                showScreen('register');
-            }
-        });
-    }
-
-    // ACCIÓN: INICIAR SESIÓN
     function login() {
         const correo = document.getElementById('login-email').value;
         const password = document.getElementById('login-pass').value;
-
-        if(!correo || !password) {
-            alert("Completa todos los campos.");
-            return;
-        }
-
-        showLoader("Verificando credenciales...");
-
-        const payload = { accion: 'login', correo, password };
-
-        enviarPeticion(payload, function(data) {
+        if(!correo || !password) return alert("Completa todos los campos.");
+        showLoader("Verificando accesos...");
+        
+        enviarPeticion({ accion: 'login', correo, password }, function(data) {
             if(data.exito) {
                 localStorage.setItem('vitalcheck_session', JSON.stringify(data.usuario));
                 currentUser = data.usuario;
@@ -251,56 +238,122 @@
         });
     }
 
-    // INICIALIZAR APP PRINCIPAL
-    function initMainApp() {
-        showScreen('main-app');
-        document.getElementById('welcome-user').innerText = `Hola, ${currentUser.nombre}`;
-        
-        // Cargar Frase Dinámica
-        fetch(API_URL)
-            .then(res => res.json())
-            .then(data => { document.getElementById('frase-container').innerHTML = `"${data.frase}"`; })
-            .catch(() => { document.getElementById('frase-container').innerHTML = '"Un paso a la vez, cuidando tu salud."'; });
+    function register() {
+        const nombre = document.getElementById('reg-name').value;
+        const correo = document.getElementById('reg-email').value;
+        const password = document.getElementById('reg-pass').value;
+        const edad = document.getElementById('reg-age').value;
+        const peso = document.getElementById('reg-weight').value;
+        const telefono = document.getElementById('reg-phone').value;
+        const objetivo = document.getElementById('reg-goal').value;
+
+        if(!nombre || !correo || !password) return alert("Llena los campos obligatorios.");
+        showLoader("Registrando...");
+
+        enviarPeticion({ accion: 'registro', nombre, correo, password, edad, peso, telefono, objetivo }, function(data) {
+            if(data.exito) {
+                localStorage.setItem('vitalcheck_session', JSON.stringify(data.usuario));
+                currentUser = data.usuario;
+                initMainApp();
+            } else {
+                alert(data.mensaje);
+                showScreen('register');
+            }
+        });
     }
 
-    // ACCIÓN: PROCESAR CHEQUEO DIARIO
+    function recoverPassword() {
+        const correo = document.getElementById('recover-email').value;
+        if(!correo) return alert("Escribe tu correo.");
+        showLoader("Buscando tu cuenta...");
+        enviarPeticion({ accion: 'recover', correo: correo }, function(data) {
+            alert(data.mensaje);
+            showScreen('login');
+        });
+    }
+
+    function initMainApp() {
+        showScreen('main-app');
+        document.getElementById('nav-bar').classList.remove('d-none');
+        document.getElementById('welcome-user').innerText = `Hola, ${currentUser.nombre}`;
+        switchTab('chequeo');
+        resetChequeoForm();
+        
+        fetch(API_URL).then(res => res.json()).then(data => {
+            document.getElementById('frase-container').innerHTML = `"${data.frase}"`;
+        }).catch(() => {
+            document.getElementById('frase-container').innerHTML = '"Paso a paso construyes tu bienestar."';
+        });
+    }
+
     function processChequeo() {
         const pain = document.getElementById('pain-area').value;
-        showLoader("Analizando tus indicadores diarios...");
-
-        const payload = {
-            accion: 'chequeo',
-            correoUsuario: currentUser.correo,
-            energia: selectedEnergy,
-            dolor: pain,
-            notas: "Registro móvil"
-        };
-
-        enviarPeticion(payload, function(data) {
+        showLoader("Guardando chequeo...");
+        
+        enviarPeticion({ accion: 'chequeo', correoUsuario: currentUser.correo, energia: selectedEnergy, dolor: pain, notas: "Móvil" }, function(data) {
             showScreen('main-app');
+            document.getElementById('nav-bar').classList.remove('d-none');
             document.getElementById('form-section').classList.add('d-none');
             document.getElementById('results-section').classList.remove('d-none');
             
-            const container = document.getElementById('exercise-list');
-            container.innerHTML = "";
-
-            if (!data.ejercicios || data.ejercicios.length === 0) {
-                container.innerHTML = `<div class="glass-card text-center">Hoy priorizaremos el descanso absoluto. Descansa profundamente. 🧘‍♂️</div>`;
+            const list = document.getElementById('exercise-list');
+            list.innerHTML = "";
+            if(!data.ejercicios || data.ejercicios.length === 0) {
+                list.innerHTML = "<div class='glass-card text-center'>Hoy toca descanso total. 🧘‍♂️</div>";
                 return;
             }
-
             data.ejercicios.forEach(ex => {
-                const card = `
+                list.innerHTML += `
                     <div class="exercise-card">
-                        <div class="exercise-info">
-                            <h6>${ex.nombre}</h6>
-                            <span><i class="fa-solid fa-tag me-1"></i>${ex.zona}</span>
-                        </div>
+                        <div class="exercise-info"><h6>${ex.nombre}</h6><span><i class="fa-solid fa-tag me-1"></i>${ex.zona}</span></div>
                         ${ex.link ? `<a href="${ex.link}" target="_blank" class="btn-play"><i class="fa-solid fa-play"></i></a>` : ''}
-                    </div>
-                `;
-                container.innerHTML += card;
+                    </div>`;
             });
+        });
+    }
+
+    function loadHistorial() {
+        const container = document.getElementById('historial-list');
+        container.innerHTML = "<div class='text-center p-3'><i class='fa-solid fa-spinner fa-spin'></i> Leyendo tu historial...</div>";
+        
+        enviarPeticion({ accion: 'historial', correoUsuario: currentUser.correo }, function(data) {
+            container.innerHTML = "";
+            if(!data.historial || data.historial.length === 0) {
+                container.innerHTML = "<p class='text-muted text-center'>Aún no tienes chequeos guardados.</p>";
+                return;
+            }
+            data.historial.forEach(h => {
+                container.innerHTML += `
+                    <div class="historial-item">
+                        <div><strong class="text-info">${h.fecha}</strong><br><small class="text-muted">Molestia: ${h.dolor}</small></div>
+                        <span class="badge ${h.energia==='Alta'?'bg-success':h.energia==='Media'?'bg-warning':'bg-danger'}">Energía ${h.energia}</span>
+                    </div>`;
+            });
+        });
+    }
+
+    function loadPerfilData() {
+        document.getElementById('perf-email').value = currentUser.correo;
+        document.getElementById('perf-weight').value = currentUser.peso || "";
+        document.getElementById('perf-goal').value = currentUser.objetivo || "Mejorar salud general";
+    }
+
+    function updateProfile() {
+        const peso = document.getElementById('perf-weight').value;
+        const objetivo = document.getElementById('perf-goal').value;
+        showLoader("Actualizando perfil...");
+        
+        enviarPeticion({ accion: 'actualizarPerfil', correoUsuario: currentUser.correo, peso, objetivo }, function(data) {
+            if(data.exito) {
+                currentUser.peso = peso;
+                currentUser.objetivo = objetivo;
+                localStorage.setItem('vitalcheck_session', JSON.stringify(currentUser));
+                alert("¡Perfil guardado con éxito!");
+            } else {
+                alert("Error al actualizar.");
+            }
+            initMainApp();
+            switchTab('perfil');
         });
     }
 
@@ -315,29 +368,19 @@
         location.reload();
     }
 
-    // FUNCIÓN AUXILIAR PARA ENVIAR DATOS A GOOGLE
     function enviarPeticion(payload, callback) {
-        fetch(API_URL, {
-            method: 'POST',
-            body: JSON.stringify(payload),
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' }
-        })
-        .then(res => res.json())
-        .then(data => callback(data))
-        .catch(err => {
-            alert("Error de conexión con el servidor de Google Sheets.");
-            showScreen(payload.accion === 'chequeo' ? 'main-app' : payload.accion);
+        fetch(API_URL, { method: 'POST', body: JSON.stringify(payload), headers: { 'Content-Type': 'text/plain;charset=utf-8' } })
+        .then(res => res.json()).then(data => callback(data))
+        .catch(() => {
+            alert("Error de conexión.");
+            location.reload();
         });
     }
 
     function showLoader(text) {
-        document.getElementById('login-section').classList.add('d-none');
-        document.getElementById('register-section').classList.add('d-none');
-        document.getElementById('main-app-section').classList.add('d-none');
-        
-        const loader = document.getElementById('global-loader');
+        showScreen(null);
+        document.getElementById('global-loader').style.display = 'block';
         document.getElementById('loader-text').innerText = text;
-        loader.style.display = 'block';
     }
 </script>
 </body>
