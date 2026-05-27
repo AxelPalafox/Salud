@@ -3,326 +3,251 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VitalCheck Ultra</title>
-    
+    <title>VitalCheck App</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f172a">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2966/2966334.png">
-
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         :root { --primary-bg: #0f172a; --accent-color: #38bdf8; --glass-bg: rgba(255, 255, 255, 0.05); --glass-border: rgba(255, 255, 255, 0.1); }
-        body { font-family: 'Outfit', sans-serif; background: radial-gradient(circle at top right, #1e293b, #0f172a); color: #f1f5f9; min-height: 100vh; padding: 20px 0; -webkit-tap-highlight-color: transparent; }
-        .app-container { max-width: 480px; margin: 0 auto; padding: 0 15px 80px 15px; }
-        .header h1 { font-weight: 700; font-size: 2rem; background: linear-gradient(to right, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin:0;}
-        .streak-badge { background: linear-gradient(45deg, #f97316, #ef4444); padding: 5px 12px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; }
-        .glass-card { background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 25px; margin-bottom: 20px; }
-        .option-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
-        .option-item { background: rgba(255,255,255,0.03); border: 1.5px solid var(--glass-border); border-radius: 15px; padding: 15px 10px; text-align: center; cursor: pointer; transition: 0.3s; }
-        .option-item i { display: block; font-size: 1.5rem; margin-bottom: 8px; }
-        .option-item.active { background: rgba(56, 189, 248, 0.2); border-color: var(--accent-color); transform: translateY(-3px); }
-        .btn-neon { background: linear-gradient(135deg, #38bdf8, #2563eb); color: white; border: none; border-radius: 16px; padding: 16px; font-weight: 600; width: 100%; transition: 0.3s; }
-        .exercise-card { background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03)); border-radius: 20px; padding: 20px; margin-bottom: 15px; border-left: 4px solid var(--accent-color); }
-        .nav-bar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); border-top: 1px solid var(--glass-border); display: flex; justify-content: space-around; padding: 12px 0; z-index: 1000; }
-        .nav-item { text-align: center; color: #64748b; cursor: pointer; font-size: 0.75rem; transition: 0.3s; flex: 1; }
-        .nav-item i { display: block; font-size: 1.3rem; margin-bottom: 3px; }
+        body { font-family: 'Outfit', sans-serif; background: #0f172a; color: #f1f5f9; padding-bottom: 80px; }
+        .glass-card { background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 20px; margin-bottom: 15px; }
+        .btn-neon { background: linear-gradient(135deg, #38bdf8, #2563eb); color: white; border: none; border-radius: 12px; padding: 15px; font-weight: 600; width: 100%; }
+        .nav-bar { position: fixed; bottom: 0; width: 100%; background: #0f172a; border-top: 1px solid var(--glass-border); display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000; }
+        .nav-item { text-align: center; color: #64748b; font-size: 0.75rem; cursor: pointer; flex: 1;}
         .nav-item.active { color: var(--accent-color); }
-        .form-control, .form-select { background-color: rgba(255,255,255,0.05) !important; border: 1px solid var(--glass-border) !important; color: white !important; border-radius: 12px; }
-        .water-btn { width: 50px; height: 50px; border-radius: 50%; background: rgba(56, 189, 248, 0.2); border: 2px solid var(--accent-color); color: white; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        .water-count { font-size: 4rem; font-weight: 700; color: var(--accent-color); margin: 0 30px; }
-        .timer-display { font-size: 2.5rem; font-weight: bold; color: #fbbf24; text-align: center; margin-top: 10px; font-variant-numeric: tabular-nums; }
+        .nav-item i { font-size: 1.2rem; display: block; margin-bottom: 3px; }
+        .form-control, .form-select { background: rgba(255,255,255,0.05) !important; color: white !important; border: 1px solid var(--glass-border); border-radius: 10px; }
         
-        /* Estilos del Menú Automático */
-        .menu-box { border-left: 4px solid #4ade80; background: rgba(74, 222, 128, 0.1); padding: 15px; border-radius: 10px; margin-bottom: 10px; }
-        .menu-title { color: #4ade80; font-weight: bold; font-size: 0.9rem; margin-bottom: 5px; }
+        /* Acordeón de Comida */
+        .accordion-button { background-color: rgba(74, 222, 128, 0.1) !important; color: #4ade80 !important; font-weight: bold; border-radius: 10px !important; }
+        .accordion-item { background: transparent; border: none; margin-bottom: 10px; }
+        .accordion-body { background: rgba(0,0,0,0.2); border-radius: 0 0 10px 10px; color: #cbd5e1; white-space: pre-line; font-size: 0.9rem; }
+        
+        /* Rutinas Ilustradas */
+        .ex-img { width: 50px; height: 50px; border-radius: 10px; background: white; padding: 5px; margin-right: 15px; }
     </style>
 </head>
 <body>
 
-<div class="app-container">
+<div class="container mt-3" style="max-width: 480px;">
     
     <div id="auth-sections">
-        <div id="login-section" class="d-none">
-            <div class="glass-card mt-5">
-                <h4 class="mb-4 fw-bold text-center"><i class="fa-solid fa-user-lock me-2 text-info"></i>Iniciar Sesión</h4>
-                <div class="mb-3"><input type="email" id="login-email" class="form-control" placeholder="Correo"></div>
-                <div class="mb-4"><input type="password" id="login-pass" class="form-control" placeholder="Contraseña"></div>
-                <button class="btn-neon mb-3" onclick="login()">INGRESAR</button>
-                <p class="text-center small"><a href="#" onclick="showScreen('register')" class="text-info">Regístrate aquí</a></p>
-            </div>
-        </div>
-        <div id="register-section" class="d-none">
-            <div class="glass-card mt-5">
-                <h4 class="mb-4 fw-bold text-center">Crear Cuenta</h4>
-                <input type="text" id="reg-name" class="form-control mb-2" placeholder="Nombre">
-                <input type="email" id="reg-email" class="form-control mb-2" placeholder="Correo">
-                <input type="password" id="reg-pass" class="form-control mb-3" placeholder="Contraseña">
-                <button class="btn-neon mb-3" onclick="register()">REGISTRARME</button>
-                <p class="text-center small"><a href="#" onclick="showScreen('login')" class="text-info">Volver al Login</a></p>
-            </div>
+        <div id="login-section" class="glass-card mt-5">
+            <h3 class="text-center mb-4">VitalCheck</h3>
+            <input type="email" id="login-email" class="form-control mb-3" placeholder="Correo">
+            <input type="password" id="login-pass" class="form-control mb-3" placeholder="Contraseña">
+            <button class="btn-neon mb-3" onclick="login()">Entrar</button>
         </div>
     </div>
 
     <div id="main-app-section" class="d-none">
         
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <p class="mb-0 text-uppercase small text-info" id="welcome-user">Hola</p>
-                <div class="header"><h1>VitalCheck</h1></div>
-            </div>
-            <div class="streak-badge"><i class="fa-solid fa-fire text-warning"></i> <span id="streak-counter">0</span></div>
+            <h4><i class="fa-solid fa-leaf text-success me-2"></i>VitalCheck</h4>
+            <button id="btn-install" class="btn btn-sm btn-outline-info d-none"><i class="fa-solid fa-download me-1"></i>Instalar App</button>
         </div>
 
         <div id="tab-chequeo">
-            <div id="form-section">
-                <div class="glass-card">
-                    <h5><i class="fa-solid fa-bolt text-warning me-2"></i>Energía</h5>
-                    <div class="option-grid">
-                        <div class="option-item" data-val="1" onclick="selectOpt('energy', this)"><i class="fa-solid fa-battery-quarter"></i>Baja</div>
-                        <div class="option-item active" data-val="2" onclick="selectOpt('energy', this)"><i class="fa-solid fa-battery-half"></i>Media</div>
-                        <div class="option-item" data-val="3" onclick="selectOpt('energy', this)"><i class="fa-solid fa-battery-full"></i>Alta</div>
-                    </div>
-                    <h5 class="mt-4"><i class="fa-solid fa-hand-dots text-danger me-2"></i>Molestia</h5>
-                    <select id="pain-area" class="form-select mb-4">
-                        <option value="Ninguno">Todo bien 👍</option>
-                        <option value="Espalda">Espalda</option>
-                        <option value="Piernas">Piernas</option>
-                    </select>
-                    <button class="btn-neon" onclick="processChequeo()">GENERAR MI DÍA IDEAL</button>
-                </div>
+            <div id="form-section" class="glass-card">
+                <h5 class="text-warning">Energía</h5>
+                <select id="energy-area" class="form-select mb-3"><option value="1">Baja</option><option value="2" selected>Media</option><option value="3">Alta</option></select>
+                <h5 class="text-danger">Molestia</h5>
+                <select id="pain-area" class="form-select mb-4"><option value="Ninguno">Todo bien</option><option value="Espalda">Espalda</option><option value="Piernas">Piernas</option></select>
+                <button class="btn-neon" onclick="processChequeo()">GENERAR MI DÍA</button>
             </div>
 
             <div id="results-section" class="d-none">
-                <h5 class="mb-3 text-info"><i class="fa-solid fa-utensils me-2"></i>Tu Menú Recomendado</h5>
-                <p class="small text-muted mb-2">Basado en tu objetivo: <span id="user-goal-display" class="text-white fw-bold"></span></p>
-                
-                <div class="menu-box"><div class="menu-title"><i class="fa-solid fa-mug-hot me-2"></i>Desayuno</div><span id="menu-desayuno" class="small"></span></div>
-                <div class="menu-box"><div class="menu-title"><i class="fa-solid fa-bowl-food me-2"></i>Comida</div><span id="menu-comida" class="small"></span></div>
-                <div class="menu-box"><div class="menu-title"><i class="fa-solid fa-moon me-2"></i>Cena</div><span id="menu-cena" class="small"></span></div>
-
-                <h5 class="mb-3 mt-4 text-success"><i class="fa-solid fa-dumbbell me-2"></i>Tu Rutina</h5>
-                <div id="daily-exercise-list"></div>
-                <button class="btn btn-outline-secondary w-100 mt-3" onclick="location.reload()">Regresar al inicio</button>
-            </div>
-        </div>
-
-        <div id="tab-ejercicios" class="d-none">
-            <h4 class="mb-3 fw-bold"><i class="fa-solid fa-dumbbell text-info me-2"></i>Mis Ejercicios</h4>
-            <div id="all-exercises-list"></div>
-        </div>
-
-        <div id="tab-nutricion" class="d-none">
-            <div class="glass-card text-center">
-                <h5 class="mb-4 text-info"><i class="fa-solid fa-droplet me-2"></i>Hidratación Diaria</h5>
-                <div class="d-flex justify-content-center align-items-center mb-4">
-                    <div class="water-btn" onclick="updateWater(-1)"><i class="fa-solid fa-minus"></i></div>
-                    <div class="water-count" id="water-display">0</div>
-                    <div class="water-btn" onclick="updateWater(1)"><i class="fa-solid fa-plus"></i></div>
+                <h5 class="text-info mb-3"><i class="fa-solid fa-utensils me-2"></i>Tu Menú Hoy</h5>
+                <div class="accordion" id="menuAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#colDesayuno" id="t-desayuno">Desayuno</button></h2>
+                        <div id="colDesayuno" class="accordion-collapse collapse" data-bs-parent="#menuAccordion"><div class="accordion-body" id="b-desayuno"></div></div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#colComida" id="t-comida">Comida</button></h2>
+                        <div id="colComida" class="accordion-collapse collapse" data-bs-parent="#menuAccordion"><div class="accordion-body" id="b-comida"></div></div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#colCena" id="t-cena">Cena</button></h2>
+                        <div id="colCena" class="accordion-collapse collapse" data-bs-parent="#menuAccordion"><div class="accordion-body" id="b-cena"></div></div>
+                    </div>
                 </div>
-                <button class="btn btn-sm btn-outline-info w-100 mb-4" onclick="saveNutrition()">Guardar Vasos</button>
-                
-                <h6 class="text-start mt-4 mb-3 text-muted">Progreso últimos 7 días</h6>
-                <canvas id="waterChart" height="150"></canvas>
+
+                <h5 class="text-success mt-4 mb-3"><i class="fa-solid fa-dumbbell me-2"></i>Tu Rutina</h5>
+                <div id="daily-exercise-list"></div>
+                <button class="btn btn-outline-secondary w-100 mt-3" onclick="location.reload()">Regresar</button>
             </div>
+        </div>
+
+        <div id="tab-historial" class="d-none">
+            <h4 class="mb-3 text-primary"><i class="fa-solid fa-calendar-week me-2"></i>Historial</h4>
+            <div id="historial-list"></div>
         </div>
 
         <div id="tab-perfil" class="d-none">
-            <h4 class="mb-3 fw-bold"><i class="fa-solid fa-user-gear text-success me-2"></i>Mi Perfil</h4>
-            <div class="glass-card text-center">
-                <h5 id="profile-name" class="fw-bold mb-0"></h5>
-                <p class="text-info small" id="profile-goal"></p>
-                <button class="btn btn-outline-danger w-100 mt-3" onclick="logout()"><i class="fa-solid fa-power-off me-2"></i>Cerrar Sesión</button>
+            <h4 class="mb-3 text-success"><i class="fa-solid fa-user-gear me-2"></i>Mi Perfil</h4>
+            <div class="glass-card">
+                <label class="small text-muted">Mi Peso (kg)</label><input type="number" id="perf-weight" class="form-control mb-2">
+                <label class="small text-muted">Objetivo Físico</label>
+                <select id="perf-goal" class="form-select mb-3">
+                    <option value="Mejorar salud general">Salud general</option>
+                    <option value="Bajar de peso">Bajar de peso</option>
+                    <option value="Ganar masa muscular">Ganar músculo</option>
+                </select>
+                <button class="btn btn-sm btn-info w-100 mb-4" onclick="updateProfile()">Guardar Cambios de Perfil</button>
+                <hr style="border-color: rgba(255,255,255,0.1)">
+                
+                <h5 class="text-warning mt-3"><i class="fa-solid fa-bell me-2"></i>Recordatorios</h5>
+                <button class="btn btn-sm btn-outline-warning w-100 mb-3" onclick="pedirPermisoNotificaciones()">Activar Notificaciones</button>
+                <div class="row text-center mb-3">
+                    <div class="col"><label class="small text-muted">Desayuno</label><input type="time" id="time-desayuno" class="form-control"></div>
+                    <div class="col"><label class="small text-muted">Ejercicio</label><input type="time" id="time-rutina" class="form-control"></div>
+                </div>
+                <button class="btn btn-sm btn-warning w-100" onclick="guardarHorarios()">Guardar Horarios</button>
             </div>
+            <button class="btn btn-outline-danger w-100 mt-2" onclick="logout()">Cerrar Sesión</button>
         </div>
     </div>
 
     <div id="nav-bar" class="nav-bar d-none">
         <div class="nav-item active" onclick="switchTab('chequeo')"><i class="fa-solid fa-heart-pulse"></i>Día</div>
-        <div class="nav-item" onclick="switchTab('ejercicios')"><i class="fa-solid fa-dumbbell"></i>Rutinas</div>
-        <div class="nav-item" onclick="switchTab('nutricion')"><i class="fa-solid fa-apple-whole"></i>Nutrición</div>
+        <div class="nav-item" onclick="switchTab('historial')"><i class="fa-solid fa-calendar-days"></i>Historial</div>
         <div class="nav-item" onclick="switchTab('perfil')"><i class="fa-solid fa-user"></i>Perfil</div>
     </div>
-
-    <div class="loader text-info" id="global-loader"><div class="spinner-border"></div></div>
+    <div class="loader text-center d-none" id="global-loader" style="margin-top: 50px;"><div class="spinner-border text-info"></div></div>
 </div>
 
 <script>
-    // ========================================================
+    // ===============================================
     // ⚠️ REEMPLAZA ESTA URL CON TU SCRIPT NUEVO
-    // ========================================================
-    const API_URL = 'https://script.google.com/macros/s/AKfycbwFHJVO99h8mC3VjNppAeyXWkWXNy49jHAGwXpc-wuGezlI53ollKpsXhMjMczugJU35A/exec';
+    // ===============================================
+    const API_URL = 'https://script.google.com/macros/s/AKfycbwJb1pK4ZeixIPjYL8bPN-EqG79v9zqsZn60hxS_BBb4pu40zwZGFie3w5uLVr2EL7CRQ/exec';
 
-    let selectedEnergy = 2, currentUser = null, waterCount = 0, timers = {}, chartInstance = null;
+    let currentUser = null;
+    let deferredPrompt;
 
-    // REGISTRAR SERVICE WORKER PARA PWA
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js').then(()=>console.log("PWA Lista"));
+    // 1. INSTALACIÓN PWA
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault(); deferredPrompt = e;
+        const btnInstall = document.getElementById('btn-install');
+        btnInstall.classList.remove('d-none');
+        btnInstall.addEventListener('click', () => {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then(() => { btnInstall.classList.add('d-none'); deferredPrompt = null; });
+        });
+    });
+
+    // 2. SISTEMA DE NOTIFICACIONES (HORARIOS)
+    function pedirPermisoNotificaciones() {
+        if (!("Notification" in window)) return alert("Tu navegador no soporta notificaciones.");
+        Notification.requestPermission().then(p => { if(p === "granted") alert("¡Notificaciones activadas!"); });
+    }
+    
+    function guardarHorarios() {
+        const h = { desayuno: document.getElementById('time-desayuno').value, rutina: document.getElementById('time-rutina').value };
+        localStorage.setItem('vitalcheck_horarios', JSON.stringify(h));
+        alert("Horarios guardados. La app te avisará si la tienes abierta o en segundo plano.");
     }
 
+    // Cronómetro interno que revisa la hora cada minuto
+    setInterval(() => {
+        const horarios = JSON.parse(localStorage.getItem('vitalcheck_horarios'));
+        if(!horarios || Notification.permission !== "granted") return;
+        const ahora = new Date();
+        const horaActual = `${ahora.getHours().toString().padStart(2,'0')}:${ahora.getMinutes().toString().padStart(2,'0')}`;
+        
+        if(horaActual === horarios.desayuno) new Notification("VitalCheck", { body: "¡Es hora de tu desayuno saludable!", icon: "https://cdn-icons-png.flaticon.com/192/2966/2966334.png" });
+        if(horaActual === horarios.rutina) new Notification("VitalCheck", { body: "¡Prepárate! Es hora de tu rutina de ejercicio.", icon: "https://cdn-icons-png.flaticon.com/192/2966/2966334.png" });
+    }, 60000); // Revisa cada 60 segundos
+
+    // INICIO APP
     window.onload = function() {
         const session = localStorage.getItem('vitalcheck_session');
-        if (session) { currentUser = JSON.parse(session); initMainApp(); } 
-        else { showScreen('login'); }
+        if (session) { currentUser = JSON.parse(session); initMainApp(); }
+        
+        const h = JSON.parse(localStorage.getItem('vitalcheck_horarios'));
+        if(h) { document.getElementById('time-desayuno').value = h.desayuno; document.getElementById('time-rutina').value = h.rutina; }
     };
 
-    function showScreen(screenId) {
-        document.getElementById('auth-sections').classList.add('d-none');
-        document.getElementById('main-app-section').classList.add('d-none');
-        document.getElementById('global-loader').style.display = 'none';
-        if(screenId === 'login' || screenId === 'register') {
-            document.getElementById('auth-sections').classList.remove('d-none');
-            document.getElementById('login-section').classList.toggle('d-none', screenId !== 'login');
-            document.getElementById('register-section').classList.toggle('d-none', screenId !== 'register');
-        }
-    }
-
     function switchTab(tabId) {
-        ['chequeo', 'ejercicios', 'nutricion', 'perfil'].forEach(t => document.getElementById('tab-' + t).classList.add('d-none'));
+        ['chequeo', 'historial', 'perfil'].forEach(t => document.getElementById('tab-' + t).classList.add('d-none'));
         document.getElementById('tab-' + tabId).classList.remove('d-none');
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
         event.currentTarget.classList.add('active');
-
-        if(tabId === 'ejercicios') loadEjercicios();
-        if(tabId === 'nutricion') loadChart();
-    }
-
-    function selectOpt(type, element) {
-        element.parentElement.querySelectorAll('.option-item').forEach(opt => opt.classList.remove('active'));
-        element.classList.add('active');
-        selectedEnergy = element.getAttribute('data-val');
+        if(tabId === 'historial') loadHistorial();
     }
 
     function login() {
-        const correo = document.getElementById('login-email').value, password = document.getElementById('login-pass').value;
-        if(!correo || !password) return; showLoader();
-        enviarPeticion({ accion: 'login', correo, password }, data => {
+        const c = document.getElementById('login-email').value, p = document.getElementById('login-pass').value;
+        if(!c || !p) return; document.getElementById('global-loader').classList.remove('d-none');
+        enviarPeticion({ accion: 'login', correo: c, password: p }, data => {
             if(data.exito) { localStorage.setItem('vitalcheck_session', JSON.stringify(data.usuario)); currentUser = data.usuario; initMainApp(); }
-            else { alert(data.mensaje); showScreen('login'); }
+            else { alert(data.mensaje); document.getElementById('global-loader').classList.add('d-none'); }
         });
     }
 
     function initMainApp() {
-        showScreen('main-app');
+        document.getElementById('auth-sections').classList.add('d-none');
         document.getElementById('main-app-section').classList.remove('d-none');
         document.getElementById('nav-bar').classList.remove('d-none');
-        document.getElementById('welcome-user').innerText = `Hola, ${currentUser.nombre}`;
-        document.getElementById('profile-name').innerText = currentUser.nombre;
-        document.getElementById('profile-goal').innerText = "Meta: " + currentUser.objetivo;
+        document.getElementById('global-loader').classList.add('d-none');
         
-        enviarPeticion({ accion: 'historial', correoUsuario: currentUser.correo }, data => {
-            if(data.exito) document.getElementById('streak-counter').innerText = data.racha || 0;
-        });
+        document.getElementById('perf-weight').value = currentUser.peso || "";
+        document.getElementById('perf-goal').value = currentUser.objetivo || "Mejorar salud general";
     }
 
-    // AHORA PROCESAR CHEQUEO ENVÍA EL OBJETIVO PARA EL MENÚ
+    // PROCESAR CHEQUEO CON MENÚS Y FOTOS
     function processChequeo() {
-        showLoader();
-        enviarPeticion({ accion: 'chequeo', correoUsuario: currentUser.correo, energia: selectedEnergy, dolor: document.getElementById('pain-area').value, objetivo: currentUser.objetivo }, data => {
-            document.getElementById('global-loader').style.display = 'none';
+        document.getElementById('global-loader').classList.remove('d-none');
+        enviarPeticion({ accion: 'chequeo', correoUsuario: currentUser.correo, energia: document.getElementById('energy-area').value, dolor: document.getElementById('pain-area').value, objetivo: currentUser.objetivo }, data => {
+            document.getElementById('global-loader').classList.add('d-none');
             document.getElementById('form-section').classList.add('d-none');
             document.getElementById('results-section').classList.remove('d-none');
             
-            // Renderizar Menú
-            document.getElementById('user-goal-display').innerText = currentUser.objetivo;
-            document.getElementById('menu-desayuno').innerText = data.menu.desayuno;
-            document.getElementById('menu-comida').innerText = data.menu.comida;
-            document.getElementById('menu-cena').innerText = data.menu.cena;
+            // Llenar Acordeones de Menú
+            document.getElementById('t-desayuno').innerText = data.menu.desayuno.titulo;
+            document.getElementById('b-desayuno').innerText = data.menu.desayuno.pasos;
+            document.getElementById('t-comida').innerText = data.menu.comida.titulo;
+            document.getElementById('b-comida').innerText = data.menu.comida.pasos;
+            document.getElementById('t-cena').innerText = data.menu.cena.titulo;
+            document.getElementById('b-cena').innerText = data.menu.cena.pasos;
 
-            // Renderizar Rutina
-            const container = document.getElementById('daily-exercise-list');
-            container.innerHTML = "";
-            data.ejercicios.forEach((ex, i) => {
+            // Llenar Rutina con Imágenes
+            const container = document.getElementById('daily-exercise-list'); container.innerHTML = "";
+            data.ejercicios.forEach(ex => {
                 container.innerHTML += `
-                <div class="exercise-card">
-                    <h6>${ex.nombre}</h6><span class="small text-info">${ex.zona}</span>
-                    <div id="timer-display-d-${i}" class="timer-display d-none">00:${ex.tiempo}</div>
-                    <button id="btn-timer-d-${i}" class="btn btn-sm btn-outline-warning w-100 mt-2" onclick="startTimer('d-${i}', ${ex.tiempo})">Iniciar ${ex.tiempo}s</button>
+                <div class="glass-card d-flex align-items-center mb-2 p-2">
+                    <img src="${ex.imagen}" class="ex-img">
+                    <div><h6 class="mb-0">${ex.nombre}</h6><span class="small text-info">${ex.tiempo} segundos</span></div>
                 </div>`;
             });
         });
     }
 
-    function loadEjercicios() {
-        document.getElementById('all-exercises-list').innerHTML = "<div class='text-center'><i class='fa-solid fa-spinner fa-spin'></i></div>";
-        enviarPeticion({ accion: 'obtenerEjerciciosTodo' }, data => {
-            const container = document.getElementById('all-exercises-list'); container.innerHTML = "";
-            data.ejercicios.forEach((ex, i) => {
-                container.innerHTML += `
-                <div class="exercise-card">
-                    <h6>${ex.nombre}</h6><span class="small text-info">${ex.zona}</span>
-                    <div id="timer-display-a-${i}" class="timer-display d-none">00:${ex.tiempo}</div>
-                    <button id="btn-timer-a-${i}" class="btn btn-sm btn-outline-warning w-100 mt-2" onclick="startTimer('a-${i}', ${ex.tiempo})">Iniciar ${ex.tiempo}s</button>
-                </div>`;
-            });
+    // HISTORIAL Y PERFIL
+    function loadHistorial() {
+        const c = document.getElementById('historial-list'); c.innerHTML = "<div class='text-center'>Cargando...</div>";
+        enviarPeticion({ accion: 'historial', correoUsuario: currentUser.correo }, data => {
+            c.innerHTML = "";
+            data.historial.forEach(h => { c.innerHTML += `<div class="glass-card p-3 mb-2 d-flex justify-content-between"><strong class="text-info">${h.fecha}</strong><span>Energía: ${h.energia}</span></div>`; });
         });
     }
 
-    function startTimer(uid, seconds) {
-        if(timers[uid]) clearInterval(timers[uid]); 
-        document.getElementById(`btn-timer-${uid}`).classList.add('d-none');
-        const display = document.getElementById(`timer-display-${uid}`);
-        display.classList.remove('d-none');
-        let timeLeft = seconds; display.innerText = `00:${timeLeft}`;
-        timers[uid] = setInterval(() => {
-            timeLeft--; display.innerText = `00:${timeLeft < 10 ? '0'+timeLeft : timeLeft}`;
-            if(timeLeft <= 0) { clearInterval(timers[uid]); display.innerText = "¡TIEMPO!"; display.classList.replace('text-warning', 'text-success'); }
-        }, 1000);
-    }
-
-    function updateWater(val) { waterCount += val; if(waterCount < 0) waterCount = 0; document.getElementById('water-display').innerText = waterCount; }
-
-    function saveNutrition() {
-        showLoader();
-        enviarPeticion({ accion: 'guardarNutricion', correoUsuario: currentUser.correo, agua: waterCount, comida: "N/A" }, data => {
-            document.getElementById('global-loader').style.display = 'none';
-            waterCount = 0; document.getElementById('water-display').innerText = waterCount;
-            loadChart(); // Actualizar gráfica
-        });
-    }
-
-    // CREACIÓN DE LA GRÁFICA CON CHART.JS
-    function loadChart() {
-        enviarPeticion({ accion: 'graficaAgua', correoUsuario: currentUser.correo }, data => {
-            const ctx = document.getElementById('waterChart').getContext('2d');
-            if(chartInstance) chartInstance.destroy(); // Borrar la vieja
-            
-            chartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: data.fechas,
-                    datasets: [{
-                        label: 'Vasos de Agua',
-                        data: data.agua,
-                        backgroundColor: 'rgba(56, 189, 248, 0.7)',
-                        borderColor: '#38bdf8',
-                        borderWidth: 1,
-                        borderRadius: 5
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.1)' }, ticks: { color: '#94a3b8' } },
-                        x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
-                    },
-                    plugins: { legend: { display: false } }
-                }
-            });
+    function updateProfile() {
+        const peso = document.getElementById('perf-weight').value, obj = document.getElementById('perf-goal').value;
+        enviarPeticion({ accion: 'actualizarPerfil', correoUsuario: currentUser.correo, peso: peso, objetivo: obj }, data => {
+            if(data.exito) { currentUser.peso = peso; currentUser.objetivo = obj; localStorage.setItem('vitalcheck_session', JSON.stringify(currentUser)); alert("Perfil actualizado"); }
         });
     }
 
     function logout() { localStorage.removeItem('vitalcheck_session'); location.reload(); }
-    function showLoader() { document.getElementById('global-loader').style.display = 'block'; }
-    function enviarPeticion(payload, cb) {
-        fetch(API_URL, { method: 'POST', body: JSON.stringify(payload), headers: { 'Content-Type': 'text/plain;charset=utf-8' }})
-        .then(res => res.json()).then(cb).catch(() => { alert("Error de conexión"); document.getElementById('global-loader').style.display = 'none'; });
-    }
+    function enviarPeticion(payload, cb) { fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) }).then(res => res.json()).then(cb); }
 </script>
 </body>
 </html>
