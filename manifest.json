@@ -5,8 +5,13 @@
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#0f172a",
-  "description": "Tu asistente personal de salud",
+  "description": "Tu app de salud personal",
   "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/192/2966/2966334.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
     {
       "src": "https://cdn-icons-png.flaticon.com/512/2966/2966334.png",
       "sizes": "512x512",
