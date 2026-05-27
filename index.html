@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* (El CSS se mantiene igual al anterior para mantener el diseño premium) */
         :root {
             --primary-bg: #0f172a;
             --accent-color: #38bdf8;
@@ -17,8 +16,11 @@
             --glass-border: rgba(255, 255, 255, 0.1);
         }
         body {
-            font-family: 'Outfit', sans-serif; background: radial-gradient(circle at top right, #1e293b, #0f172a);
-            color: #f1f5f9; min-height: 100vh; padding: 20px 0;
+            font-family: 'Outfit', sans-serif; 
+            background: radial-gradient(circle at top right, #1e293b, #0f172a);
+            color: #f1f5f9; 
+            min-height: 100vh; 
+            padding: 20px 0;
         }
         .app-container { max-width: 480px; margin: 0 auto; padding: 0 15px; }
         .header h1 { font-weight: 700; font-size: 2rem; background: linear-gradient(to right, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -34,140 +36,308 @@
         .exercise-info span { font-size: 0.85rem; color: var(--accent-color); }
         .btn-play { width: 40px; height: 40px; background: var(--accent-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary-bg); text-decoration: none; }
         .loader { display: none; text-align: center; margin: 20px 0; }
+        .form-control, .form-select { background-color: rgba(255,255,255,0.05) !important; border: 1px solid var(--glass-border) !important; color: white !important; border-radius: 12px; padding: 12px; }
+        .form-control::placeholder { color: #64748b; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
-    <div class="header">
-        <p class="mb-1 text-uppercase small" style="color: var(--accent-color); letter-spacing: 2px;">Hola de nuevo</p>
-        <h1>VitalCheck</h1>
-    </div>
-
-    <div class="frase-dia" id="frase-container">
-        <i class="fa-solid fa-spinner fa-spin me-2"></i> Cargando inspiración de hoy...
-    </div>
-
-    <div id="form-section">
+    
+    <div id="login-section" class="d-none">
+        <div class="header mb-4 text-center">
+            <h1>VitalCheck</h1>
+            <p class="text-muted">Tu asistente de salud personal</p>
+        </div>
         <div class="glass-card">
-            <h5 class="mb-4"><i class="fa-solid fa-bolt me-2" style="color: #fbbf24;"></i>¿Energía actual?</h5>
-            <div class="option-grid" id="energy-options">
-                <div class="option-item" data-val="1" onclick="selectOption(this)">
-                    <i class="fa-solid fa-battery-quarter"></i><span>Baja</span>
-                </div>
-                <div class="option-item active" data-val="2" onclick="selectOption(this)">
-                    <i class="fa-solid fa-battery-half"></i><span>Media</span>
-                </div>
-                <div class="option-item" data-val="3" onclick="selectOption(this)">
-                    <i class="fa-solid fa-battery-full"></i><span>Alta</span>
+            <h4 class="mb-4 fw-bold text-center"><i class="fa-solid fa-user-lock me-2 text-info"></i>Iniciar Sesión</h4>
+            <div class="mb-3">
+                <input type="email" id="login-email" class="form-control" placeholder="Correo electrónico">
+            </div>
+            <div class="mb-4">
+                <input type="password" id="login-pass" class="form-control" placeholder="Contraseña">
+            </div>
+            <button class="btn-neon mb-3" onclick="login()">INGRESAR</button>
+            <p class="text-center mb-0 small">¿No tienes cuenta? <a href="#" onclick="toggleAuthScreens('register')" class="text-info text-decoration-none fw-bold">Regístrate aquí</a></p>
+        </div>
+    </div>
+
+    <div id="register-section" class="d-none">
+        <div class="header mb-4">
+            <h1>Crear Cuenta</h1>
+            <p class="text-muted">Completa tu perfil de salud</p>
+        </div>
+        <div class="glass-card">
+            <h5 class="mb-3 fw-bold text-info"><i class="fa-solid fa-id-card me-2"></i>Datos de Acceso</h5>
+            <div class="mb-3"><input type="text" id="reg-name" class="form-control" placeholder="Nombre completo"></div>
+            <div class="mb-3"><input type="email" id="reg-email" class="form-control" placeholder="Correo electrónico"></div>
+            <div class="mb-4"><input type="password" id="reg-pass" class="form-control" placeholder="Contraseña básica"></div>
+
+            <h5 class="mb-3 fw-bold text-success"><i class="fa-solid fa-heart-pulse me-2"></i>Indicadores de Salud</h5>
+            <div class="row mb-3">
+                <div class="col"><input type="number" id="reg-age" class="form-control" placeholder="Edad (Años)"></div>
+                <div class="col"><input type="number" id="reg-weight" class="form-control" placeholder="Peso (kg)"></div>
+            </div>
+            <div class="mb-3"><input type="tel" id="reg-phone" class="form-control" placeholder="Teléfono (ej. +521234...)"></div>
+            <div class="mb-4">
+                <label class="form-label small text-muted">¿Cuál es tu objetivo principal?</label>
+                <select id="reg-goal" class="form-select">
+                    <option value="Mejorar salud general">Mejorar salud general</option>
+                    <option value="Bajar de peso">Bajar de peso / Definición</option>
+                    <option value="Ganar masa muscular">Ganar masa muscular</option>
+                    <option value="Aliviar dolores musculares">Aliviar dolores musculares</option>
+                </select>
+            </div>
+
+            <button class="btn-neon mb-3" onclick="register()">REGISTRARME Y EMPEZAR</button>
+            <p class="text-center mb-0 small">¿Ya tienes cuenta? <a href="#" onclick="toggleAuthScreens('login')" class="text-info text-decoration-none fw-bold">Inicia sesión</a></p>
+        </div>
+    </div>
+
+    <div id="main-app-section" class="d-none">
+        <div class="header d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <p class="mb-1 text-uppercase small" style="color: var(--accent-color); letter-spacing: 2px;" id="welcome-user">Hola</p>
+                <h1>VitalCheck</h1>
+            </div>
+            <button class="btn btn-sm btn-outline-danger border-0" onclick="logout()"><i class="fa-solid fa-power-off"></i></button>
+        </div>
+
+        <div class="frase-dia" id="frase-container">
+            <i class="fa-solid fa-spinner fa-spin me-2"></i> Cargando inspiración...
+        </div>
+
+        <div id="form-section">
+            <div class="glass-card">
+                <h5 class="mb-4"><i class="fa-solid fa-bolt me-2" style="color: #fbbf24;"></i>¿Energía actual?</h5>
+                <div class="option-grid">
+                    <div class="option-item" data-val="1" onclick="selectEnergyOption(this)"><i class="fa-solid fa-battery-quarter"></i><span>Baja</span></div>
+                    <div class="option-item active" data-val="2" onclick="selectEnergyOption(this)"><i class="fa-solid fa-battery-half"></i><span>Media</span></div>
+                    <div class="option-item" data-val="3" onclick="selectEnergyOption(this)"><i class="fa-solid fa-battery-full"></i><span>Alta</span></div>
                 </div>
             </div>
+
+            <div class="glass-card">
+                <h5 class="mb-4"><i class="fa-solid fa-hand-dots me-2" style="color: #f87171;"></i>¿Alguna molestia?</h5>
+                <select id="pain-area" class="form-select">
+                    <option value="Ninguno">Todo bien 👍</option>
+                    <option value="Espalda">Espalda / Lumbar</option>
+                    <option value="Piernas">Piernas / Rodillas</option>
+                    <option value="Hombros">Hombros / Cuello</option>
+                </select>
+            </div>
+
+            <button class="btn-neon mb-4" onclick="processChequeo()" id="main-btn">
+                GENERAR MI RUTINA <i class="fa-solid fa-arrow-right ms-2"></i>
+            </button>
         </div>
 
-        <div class="glass-card">
-            <h5 class="mb-4"><i class="fa-solid fa-hand-dots me-2" style="color: #f87171;"></i>¿Alguna molestia?</h5>
-            <select id="pain-area" class="form-select bg-dark text-white border-0 py-3" style="border-radius: 12px; background-color: rgba(255,255,255,0.05) !important;">
-                <option value="Ninguno">Todo bien 👍</option>
-                <option value="Espalda">Espalda / Lumbar</option>
-                <option value="Piernas">Piernas / Rodillas</option>
-                <option value="Hombros">Hombros / Cuello</option>
-            </select>
-        </div>
-
-        <button class="btn-neon mb-4" onclick="processData()" id="main-btn">
-            GENERAR MI RUTINA <i class="fa-solid fa-arrow-right ms-2"></i>
-        </button>
-        
-        <div class="loader text-info" id="loader">
-            <div class="spinner-border" role="status"></div>
-            <p class="mt-2">Analizando tu estado...</p>
+        <div id="results-section" class="d-none">
+            <h5 class="mb-4"><i class="fa-solid fa-dumbbell me-2 text-success"></i>Tu Rutina de Hoy</h5>
+            <div id="exercise-list"></div>
+            <button class="btn btn-link text-white-50 w-100 mt-3" onclick="resetChequeoForm()">
+                <i class="fa-solid fa-rotate-left me-2"></i>Nuevo chequeo diario
+            </button>
         </div>
     </div>
 
-    <div id="results-section" class="d-none">
-        <h5 class="mb-4"><i class="fa-solid fa-dumbbell me-2 text-success"></i>Tu Rutina de Hoy</h5>
-        <div id="exercise-list"></div>
-        <button class="btn btn-link text-white-50 w-100 mt-3" onclick="location.reload()">
-            <i class="fa-solid fa-rotate-left me-2"></i>Nuevo chequeo
-        </button>
+    <div class="loader text-info" id="global-loader">
+        <div class="spinner-border" role="status"></div>
+        <p class="mt-2" id="loader-text">Conectando con el servidor...</p>
     </div>
+
 </div>
 
 <script>
-    // ==========================================
-    // ⚠️ PEGA AQUÍ TU URL DE APPS SCRIPT
-    // ==========================================
+    // ========================================================
+    // ⚠️ REEMPLAZA ESTA URL CON TU URL REAL DE APPS SCRIPT
+    // ========================================================
     const API_URL = 'https://script.google.com/macros/s/TU_CODIGO_AQUI/exec';
 
     let selectedEnergy = 2;
+    let currentUser = null;
 
-    // Cargar frase al iniciar la app
+    // Verificar sesión al cargar la página
     window.onload = function() {
-        fetch(API_URL)
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('frase-container').innerHTML = `"${data.frase}"`;
-            })
-            .catch(error => {
-                document.getElementById('frase-container').innerHTML = '"Un paso a la vez."';
-            });
+        const session = localStorage.getItem('vitalcheck_session');
+        if (session) {
+            currentUser = JSON.parse(session);
+            initMainApp();
+        } else {
+            showScreen('login');
+        }
     };
 
-    function selectOption(element) {
+    function showScreen(screenId) {
+        document.getElementById('login-section').classList.add('d-none');
+        document.getElementById('register-section').classList.add('d-none');
+        document.getElementById('main-app-section').classList.add('d-none');
+        document.getElementById('global-loader').style.display = 'none';
+        
+        if(screenId) {
+            document.getElementById(screenId + '-section').classList.remove('d-none');
+        }
+    }
+
+    function toggleAuthScreens(target) {
+        showScreen(target);
+    }
+
+    function selectEnergyOption(element) {
         const options = element.parentElement.querySelectorAll('.option-item');
         options.forEach(opt => opt.classList.remove('active'));
         element.classList.add('active');
         selectedEnergy = element.getAttribute('data-val');
     }
 
-    function processData() {
-        const btn = document.getElementById('main-btn');
-        const loader = document.getElementById('loader');
-        const pain = document.getElementById('pain-area').value;
+    // ACCIÓN: REGISTRO DE USUARIO
+    function register() {
+        const nombre = document.getElementById('reg-name').value;
+        const correo = document.getElementById('reg-email').value;
+        const password = document.getElementById('reg-pass').value;
+        const edad = document.getElementById('reg-age').value;
+        const peso = document.getElementById('reg-weight').value;
+        const telefono = document.getElementById('reg-phone').value;
+        const objetivo = document.getElementById('reg-goal').value;
 
-        btn.style.display = 'none';
-        loader.style.display = 'block';
-
-        const payload = { energia: selectedEnergy, dolor: pain, notas: "GitHub App" };
-
-        // Enviar datos al Apps Script
-        fetch(API_URL, {
-            method: 'POST',
-            body: JSON.stringify(payload),
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' } // Usamos text/plain para evitar errores de CORS
-        })
-        .then(response => response.json())
-        .then(data => showExercises(data))
-        .catch(error => {
-            alert("Error al conectar con Google Sheets.");
-            btn.style.display = 'block';
-            loader.style.display = 'none';
-        });
-    }
-
-    function showExercises(list) {
-        document.getElementById('form-section').classList.add('d-none');
-        document.getElementById('results-section').classList.remove('d-none');
-        const container = document.getElementById('exercise-list');
-        container.innerHTML = "";
-
-        if (list.length === 0) {
-            container.innerHTML = `<div class="glass-card text-center">Hoy es buen día para descansar. 🧘‍♂️</div>`;
+        if(!nombre || !correo || !password) {
+            alert("Por favor llena los campos de nombre, correo y contraseña.");
             return;
         }
 
-        list.forEach(ex => {
-            const card = `
-                <div class="exercise-card">
-                    <div class="exercise-info">
-                        <h6>${ex.nombre}</h6>
-                        <span><i class="fa-solid fa-tag me-1"></i>${ex.zona}</span>
-                    </div>
-                    ${ex.link ? `<a href="${ex.link}" target="_blank" class="btn-play"><i class="fa-solid fa-play"></i></a>` : ''}
-                </div>
-            `;
-            container.innerHTML += card;
+        showLoader("Creando tu cuenta y enviando correo...");
+
+        const payload = {
+            accion: 'registro',
+            nombre, correo, password, edad, peso, telefono, objetivo
+        };
+
+        enviarPeticion(payload, function(data) {
+            if(data.exito) {
+                alert("¡Registro exitoso! Revisa tu bandeja de correo (e incluso spam) para ver tu bienvenida.");
+                localStorage.setItem('vitalcheck_session', JSON.stringify(data.usuario));
+                currentUser = data.usuario;
+                initMainApp();
+            } else {
+                alert(data.mensaje);
+                showScreen('register');
+            }
         });
+    }
+
+    // ACCIÓN: INICIAR SESIÓN
+    function login() {
+        const correo = document.getElementById('login-email').value;
+        const password = document.getElementById('login-pass').value;
+
+        if(!correo || !password) {
+            alert("Completa todos los campos.");
+            return;
+        }
+
+        showLoader("Verificando credenciales...");
+
+        const payload = { accion: 'login', correo, password };
+
+        enviarPeticion(payload, function(data) {
+            if(data.exito) {
+                localStorage.setItem('vitalcheck_session', JSON.stringify(data.usuario));
+                currentUser = data.usuario;
+                initMainApp();
+            } else {
+                alert(data.mensaje);
+                showScreen('login');
+            }
+        });
+    }
+
+    // INICIALIZAR APP PRINCIPAL
+    function initMainApp() {
+        showScreen('main-app');
+        document.getElementById('welcome-user').innerText = `Hola, ${currentUser.nombre}`;
+        
+        // Cargar Frase Dinámica
+        fetch(API_URL)
+            .then(res => res.json())
+            .then(data => { document.getElementById('frase-container').innerHTML = `"${data.frase}"`; })
+            .catch(() => { document.getElementById('frase-container').innerHTML = '"Un paso a la vez, cuidando tu salud."'; });
+    }
+
+    // ACCIÓN: PROCESAR CHEQUEO DIARIO
+    function processChequeo() {
+        const pain = document.getElementById('pain-area').value;
+        showLoader("Analizando tus indicadores diarios...");
+
+        const payload = {
+            accion: 'chequeo',
+            correoUsuario: currentUser.correo,
+            energia: selectedEnergy,
+            dolor: pain,
+            notas: "Registro móvil"
+        };
+
+        enviarPeticion(payload, function(data) {
+            showScreen('main-app');
+            document.getElementById('form-section').classList.add('d-none');
+            document.getElementById('results-section').classList.remove('d-none');
+            
+            const container = document.getElementById('exercise-list');
+            container.innerHTML = "";
+
+            if (!data.ejercicios || data.ejercicios.length === 0) {
+                container.innerHTML = `<div class="glass-card text-center">Hoy priorizaremos el descanso absoluto. Descansa profundamente. 🧘‍♂️</div>`;
+                return;
+            }
+
+            data.ejercicios.forEach(ex => {
+                const card = `
+                    <div class="exercise-card">
+                        <div class="exercise-info">
+                            <h6>${ex.nombre}</h6>
+                            <span><i class="fa-solid fa-tag me-1"></i>${ex.zona}</span>
+                        </div>
+                        ${ex.link ? `<a href="${ex.link}" target="_blank" class="btn-play"><i class="fa-solid fa-play"></i></a>` : ''}
+                    </div>
+                `;
+                container.innerHTML += card;
+            });
+        });
+    }
+
+    function resetChequeoForm() {
+        document.getElementById('form-section').classList.remove('d-none');
+        document.getElementById('results-section').classList.add('d-none');
+    }
+
+    function logout() {
+        localStorage.removeItem('vitalcheck_session');
+        currentUser = null;
+        location.reload();
+    }
+
+    // FUNCIÓN AUXILIAR PARA ENVIAR DATOS A GOOGLE
+    function enviarPeticion(payload, callback) {
+        fetch(API_URL, {
+            method: 'POST',
+            body: JSON.stringify(payload),
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+        })
+        .then(res => res.json())
+        .then(data => callback(data))
+        .catch(err => {
+            alert("Error de conexión con el servidor de Google Sheets.");
+            showScreen(payload.accion === 'chequeo' ? 'main-app' : payload.accion);
+        });
+    }
+
+    function showLoader(text) {
+        document.getElementById('login-section').classList.add('d-none');
+        document.getElementById('register-section').classList.add('d-none');
+        document.getElementById('main-app-section').classList.add('d-none');
+        
+        const loader = document.getElementById('global-loader');
+        document.getElementById('loader-text').innerText = text;
+        loader.style.display = 'block';
     }
 </script>
 </body>
