@@ -3,169 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VitalCheck Pro | Mi Salud</title>
+    <title>VitalCheck Ultra | Mi Salud</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        :root {
-            --primary-bg: #0f172a;
-            --accent-color: #38bdf8;
-            --glass-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
-        }
-        body {
-            font-family: 'Outfit', sans-serif; 
-            background: radial-gradient(circle at top right, #1e293b, #0f172a);
-            color: #f1f5f9; 
-            min-height: 100vh; 
-            padding: 20px 0;
-        }
+        :root { --primary-bg: #0f172a; --accent-color: #38bdf8; --glass-bg: rgba(255, 255, 255, 0.05); --glass-border: rgba(255, 255, 255, 0.1); }
+        body { font-family: 'Outfit', sans-serif; background: radial-gradient(circle at top right, #1e293b, #0f172a); color: #f1f5f9; min-height: 100vh; padding: 20px 0; }
         .app-container { max-width: 480px; margin: 0 auto; padding: 0 15px 80px 15px; }
-        .header h1 { font-weight: 700; font-size: 2rem; background: linear-gradient(to right, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .frase-dia { font-size: 0.95rem; font-style: italic; color: #94a3b8; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; margin-bottom: 25px; border-left: 3px solid #818cf8; }
+        .header h1 { font-weight: 700; font-size: 2rem; background: linear-gradient(to right, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin:0;}
+        .streak-badge { background: linear-gradient(45deg, #f97316, #ef4444); padding: 5px 12px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.4); }
         .glass-card { background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 25px; margin-bottom: 20px; }
         .option-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
         .option-item { background: rgba(255,255,255,0.03); border: 1.5px solid var(--glass-border); border-radius: 15px; padding: 15px 10px; text-align: center; cursor: pointer; transition: 0.3s; }
         .option-item i { display: block; font-size: 1.5rem; margin-bottom: 8px; }
         .option-item.active { background: rgba(56, 189, 248, 0.2); border-color: var(--accent-color); transform: translateY(-3px); }
         .btn-neon { background: linear-gradient(135deg, #38bdf8, #2563eb); color: white; border: none; border-radius: 16px; padding: 16px; font-weight: 600; width: 100%; transition: 0.3s; }
-        .exercise-card { background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03)); border-radius: 20px; padding: 20px; margin-bottom: 15px; border-left: 4px solid var(--accent-color); display: flex; align-items: center; justify-content: space-between; }
-        .exercise-info h6 { font-weight: 600; margin: 0; color: #fff; }
-        .exercise-info span { font-size: 0.85rem; color: var(--accent-color); }
+        .exercise-card { background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03)); border-radius: 20px; padding: 20px; margin-bottom: 15px; border-left: 4px solid var(--accent-color); }
         .btn-play { width: 40px; height: 40px; background: var(--accent-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary-bg); text-decoration: none; }
-        .loader { display: none; text-align: center; margin: 20px 0; }
-        .form-control, .form-select { background-color: rgba(255,255,255,0.05) !important; border: 1px solid var(--glass-border) !important; color: white !important; border-radius: 12px; padding: 12px; }
-        .form-control::placeholder { color: #64748b; }
-        
-        /* BARRA DE NAVEGACIÓN INFERIOR estilo App Móvil */
         .nav-bar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); border-top: 1px solid var(--glass-border); display: flex; justify-content: space-around; padding: 12px 0; z-index: 1000; }
-        .nav-item { text-align: center; color: #64748b; cursor: pointer; font-size: 0.8rem; transition: 0.3s; flex: 1; }
+        .nav-item { text-align: center; color: #64748b; cursor: pointer; font-size: 0.75rem; transition: 0.3s; flex: 1; }
         .nav-item i { display: block; font-size: 1.3rem; margin-bottom: 3px; }
         .nav-item.active { color: var(--accent-color); }
-        .historial-item { background: rgba(255,255,255,0.02); padding: 15px; border-radius: 15px; margin-bottom: 10px; border: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; }
+        .form-control, .form-select { background-color: rgba(255,255,255,0.05) !important; border: 1px solid var(--glass-border) !important; color: white !important; border-radius: 12px; }
+        
+        /* Modulos Nuevos */
+        .water-btn { width: 50px; height: 50px; border-radius: 50%; background: rgba(56, 189, 248, 0.2); border: 2px solid var(--accent-color); color: white; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .water-count { font-size: 4rem; font-weight: 700; color: var(--accent-color); margin: 0 30px; }
+        .timer-display { font-size: 2.5rem; font-weight: bold; color: #fbbf24; text-align: center; margin-top: 10px; font-variant-numeric: tabular-nums; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
     
-    <div id="login-section" class="d-none">
-        <div class="header mb-4 text-center">
-            <h1>VitalCheck</h1>
-            <p class="text-muted">Tu asistente de salud personal</p>
-        </div>
-        <div class="glass-card">
-            <h4 class="mb-4 fw-bold text-center"><i class="fa-solid fa-user-lock me-2 text-info"></i>Iniciar Sesión</h4>
-            <div class="mb-3"><input type="email" id="login-email" class="form-control" placeholder="Correo electrónico"></div>
-            <div class="mb-3"><input type="password" id="login-pass" class="form-control" placeholder="Contraseña"></div>
-            <p class="text-end small mb-4"><a href="#" onclick="showScreen('recover')" class="text-info text-decoration-none">¿Olvidaste tu contraseña?</a></p>
-            <button class="btn-neon mb-3" onclick="login()">INGRESAR</button>
-            <p class="text-center mb-0 small">¿No tienes cuenta? <a href="#" onclick="showScreen('register')" class="text-info text-decoration-none fw-bold">Regístrate aquí</a></p>
-        </div>
-    </div>
-
-    <div id="recover-section" class="d-none">
-        <div class="glass-card">
-            <h4 class="mb-3 fw-bold"><i class="fa-solid fa-key me-2 text-warning"></i>Recuperar Acceso</h4>
-            <p class="text-muted small">Ingresa tu correo y te enviaremos tu contraseña por mensaje automático.</p>
-            <div class="mb-4"><input type="email" id="recover-email" class="form-control" placeholder="Tu correo electrónico"></div>
-            <button class="btn-neon mb-3" onclick="recoverPassword()">RECUPERAR CONTRASEÑA</button>
-            <p class="text-center mb-0 small"><a href="#" onclick="showScreen('login')" class="text-muted text-decoration-none"><i class="fa-solid fa-arrow-left me-2"></i>Volver al Login</a></p>
-        </div>
-    </div>
-
-    <div id="register-section" class="d-none">
-        <div class="header mb-4"><h1>Crear Cuenta</h1><p class="text-muted">Completa tu perfil de salud</p></div>
-        <div class="glass-card">
-            <h5 class="mb-3 fw-bold text-info"><i class="fa-solid fa-id-card me-2"></i>Datos de Acceso</h5>
-            <div class="mb-3"><input type="text" id="reg-name" class="form-control" placeholder="Nombre completo"></div>
-            <div class="mb-3"><input type="email" id="reg-email" class="form-control" placeholder="Correo electrónico"></div>
-            <div class="mb-4"><input type="password" id="reg-pass" class="form-control" placeholder="Contraseña"></div>
-
-            <h5 class="mb-3 fw-bold text-success"><i class="fa-solid fa-heart-pulse me-2"></i>Indicadores de Salud</h5>
-            <div class="row mb-3">
-                <div class="col"><input type="number" id="reg-age" class="form-control" placeholder="Edad"></div>
-                <div class="col"><input type="number" id="reg-weight" class="form-control" placeholder="Peso (kg)"></div>
+    <div id="auth-sections">
+        <div id="login-section" class="d-none">
+            <div class="glass-card mt-5">
+                <h4 class="mb-4 fw-bold text-center"><i class="fa-solid fa-user-lock me-2 text-info"></i>Iniciar Sesión</h4>
+                <div class="mb-3"><input type="email" id="login-email" class="form-control" placeholder="Correo"></div>
+                <div class="mb-4"><input type="password" id="login-pass" class="form-control" placeholder="Contraseña"></div>
+                <button class="btn-neon mb-3" onclick="login()">INGRESAR</button>
+                <p class="text-center small"><a href="#" onclick="showScreen('register')" class="text-info">Regístrate aquí</a></p>
             </div>
-            <div class="mb-3"><input type="tel" id="reg-phone" class="form-control" placeholder="Teléfono"></div>
-            <div class="mb-4">
-                <select id="reg-goal" class="form-select">
-                    <option value="Mejorar salud general">Mejorar salud general</option>
-                    <option value="Bajar de peso">Bajar de peso / Definición</option>
-                    <option value="Ganar masa muscular">Ganar masa muscular</option>
-                </select>
+        </div>
+        <div id="register-section" class="d-none">
+            <div class="glass-card mt-5">
+                <h4 class="mb-4 fw-bold text-center">Crear Cuenta</h4>
+                <input type="text" id="reg-name" class="form-control mb-2" placeholder="Nombre">
+                <input type="email" id="reg-email" class="form-control mb-2" placeholder="Correo">
+                <input type="password" id="reg-pass" class="form-control mb-3" placeholder="Contraseña">
+                <button class="btn-neon mb-3" onclick="register()">REGISTRARME</button>
+                <p class="text-center small"><a href="#" onclick="showScreen('login')" class="text-info">Volver al Login</a></p>
             </div>
-            <button class="btn-neon mb-3" onclick="register()">REGISTRARME</button>
-            <p class="text-center mb-0 small">¿Ya tienes cuenta? <a href="#" onclick="showScreen('login')" class="text-info text-decoration-none fw-bold">Inicia sesión</a></p>
         </div>
     </div>
 
     <div id="main-app-section" class="d-none">
-        <div class="header d-flex justify-content-between align-items-center mb-3">
-            <div><p class="mb-1 text-uppercase small style='color: var(--accent-color)'" id="welcome-user">Hola</p><h1>VitalCheck</h1></div>
-            <button class="btn btn-sm btn-outline-danger border-0" onclick="logout()"><i class="fa-solid fa-power-off"></i></button>
+        
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <p class="mb-0 text-uppercase small text-info" id="welcome-user">Hola</p>
+                <div class="header"><h1>VitalCheck</h1></div>
+            </div>
+            <div class="streak-badge"><i class="fa-solid fa-fire text-warning"></i> <span id="streak-counter">0</span></div>
         </div>
 
         <div id="tab-chequeo">
-            <div class="frase-dia" id="frase-container">Cargando inspiración...</div>
-            <div id="form-section">
-                <div class="glass-card">
-                    <h5><i class="fa-solid fa-bolt me-2 text-warning"></i>¿Energía actual?</h5>
-                    <div class="option-grid">
-                        <div class="option-item" data-val="1" onclick="selectEnergyOption(this)"><i class="fa-solid fa-battery-quarter"></i><span>Baja</span></div>
-                        <div class="option-item active" data-val="2" onclick="selectEnergyOption(this)"><i class="fa-solid fa-battery-half"></i><span>Media</span></div>
-                        <div class="option-item" data-val="3" onclick="selectEnergyOption(this)"><i class="fa-solid fa-battery-full"></i><span>Alta</span></div>
-                    </div>
+            <div class="glass-card">
+                <h5><i class="fa-solid fa-bolt text-warning me-2"></i>Energía</h5>
+                <div class="option-grid">
+                    <div class="option-item" data-val="1" onclick="selectOpt('energy', this)"><i class="fa-solid fa-battery-quarter"></i>Baja</div>
+                    <div class="option-item active" data-val="2" onclick="selectOpt('energy', this)"><i class="fa-solid fa-battery-half"></i>Media</div>
+                    <div class="option-item" data-val="3" onclick="selectOpt('energy', this)"><i class="fa-solid fa-battery-full"></i>Alta</div>
                 </div>
-                <div class="glass-card">
-                    <h5><i class="fa-solid fa-hand-dots me-2 text-danger"></i>¿Alguna molestia?</h5>
-                    <select id="pain-area" class="form-select">
-                        <option value="Ninguno">Todo bien 👍</option>
-                        <option value="Espalda">Espalda / Lumbar</option>
-                        <option value="Piernas">Piernas / Rodillas</option>
-                        <option value="Hombros">Hombros / Cuello</option>
-                    </select>
-                </div>
-                <button class="btn-neon mb-4" onclick="processChequeo()">GENERAR MI RUTINA</button>
+                <h5 class="mt-4"><i class="fa-solid fa-hand-dots text-danger me-2"></i>Molestia</h5>
+                <select id="pain-area" class="form-select mb-4">
+                    <option value="Ninguno">Todo bien 👍</option>
+                    <option value="Espalda">Espalda</option>
+                    <option value="Piernas">Piernas</option>
+                </select>
+                <button class="btn-neon" onclick="processChequeo()">GENERAR MI RUTINA</button>
             </div>
             <div id="results-section" class="d-none">
-                <h5 class="mb-3"><i class="fa-solid fa-dumbbell text-success me-2"></i>Tu Rutina Recomendada</h5>
-                <div id="exercise-list"></div>
-                <button class="btn btn-link text-white-50 w-100 mt-2" onclick="resetChequeoForm()">Hacer otro chequeo</button>
+                <h5 class="mb-3 text-success">Tu Rutina de Hoy</h5>
+                <div id="daily-exercise-list"></div>
+            </div>
+        </div>
+
+        <div id="tab-ejercicios" class="d-none">
+            <h4 class="mb-3 fw-bold"><i class="fa-solid fa-dumbbell text-info me-2"></i>Mis Ejercicios</h4>
+            <div id="all-exercises-list"></div>
+        </div>
+
+        <div id="tab-nutricion" class="d-none">
+            <h4 class="mb-3 fw-bold"><i class="fa-solid fa-apple-whole text-success me-2"></i>Nutrición</h4>
+            <div class="glass-card text-center">
+                <h5 class="mb-4 text-info"><i class="fa-solid fa-droplet me-2"></i>Hidratación Diaria</h5>
+                <div class="d-flex justify-content-center align-items-center mb-4">
+                    <div class="water-btn" onclick="updateWater(-1)"><i class="fa-solid fa-minus"></i></div>
+                    <div class="water-count" id="water-display">0</div>
+                    <div class="water-btn" onclick="updateWater(1)"><i class="fa-solid fa-plus"></i></div>
+                </div>
+                <p class="text-muted small">Meta recomendada: 8 vasos al día</p>
+            </div>
+            <div class="glass-card">
+                <h5 class="mb-3"><i class="fa-solid fa-utensils text-warning me-2"></i>¿Cómo comiste hoy?</h5>
+                <select id="food-quality" class="form-select mb-4">
+                    <option value="Excelente">🥗 Excelente (Balanceado)</option>
+                    <option value="Regular">🍔 Regular (Hubo antojos)</option>
+                    <option value="Mala">🍕 Mala (Pura chatarra)</option>
+                </select>
+                <button class="btn-neon" onclick="saveNutrition()">GUARDAR REGISTRO</button>
             </div>
         </div>
 
         <div id="tab-historial" class="d-none">
-            <h4 class="mb-4 fw-bold"><i class="fa-solid fa-calendar-week me-2 text-info"></i>Mi Historial</h4>
+            <h4 class="mb-3 fw-bold"><i class="fa-solid fa-calendar-week text-primary me-2"></i>Historial</h4>
             <div id="historial-list"></div>
         </div>
 
         <div id="tab-perfil" class="d-none">
-            <h4 class="mb-4 fw-bold"><i class="fa-solid fa-user-gear me-2 text-success"></i>Mi Perfil</h4>
-            <div class="glass-card">
-                <div class="mb-3"><label class="small text-muted">Correo electrónico (No modificable)</label><input type="text" id="perf-email" class="form-control" disabled></div>
-                <div class="mb-3"><label class="small text-muted">Mi Peso Actual (kg)</label><input type="number" id="perf-weight" class="form-control"></div>
-                <div class="mb-4"><label class="small text-muted">Mi Objetivo Físico</label>
-                    <select id="perf-goal" class="form-select">
-                        <option value="Mejorar salud general">Mejorar salud general</option>
-                        <option value="Bajar de peso">Bajar de peso / Definición</option>
-                        <option value="Ganar masa muscular">Ganar masa muscular</option>
-                    </select>
-                </div>
-                <button class="btn-neon" onclick="updateProfile()">GUARDAR CAMBIOS</button>
+            <div class="glass-card text-center">
+                <button class="btn btn-outline-danger w-100" onclick="logout()"><i class="fa-solid fa-power-off me-2"></i>Cerrar Sesión</button>
             </div>
         </div>
+
     </div>
 
     <div id="nav-bar" class="nav-bar d-none">
-        <div class="nav-item active" onclick="switchTab('chequeo')"><i class="fa-solid fa-heart-pulse"></i><span>Chequeo</span></div>
-        <div class="nav-item" onclick="switchTab('historial')"><i class="fa-solid fa-calendar-days"></i><span>Historial</span></div>
-        <div class="nav-item" onclick="switchTab('perfil')"><i class="fa-solid fa-user"></i><span>Perfil</span></div>
+        <div class="nav-item active" onclick="switchTab('chequeo')"><i class="fa-solid fa-heart-pulse"></i>Chequeo</div>
+        <div class="nav-item" onclick="switchTab('ejercicios')"><i class="fa-solid fa-dumbbell"></i>Ejercicios</div>
+        <div class="nav-item" onclick="switchTab('nutricion')"><i class="fa-solid fa-apple-whole"></i>Nutrición</div>
+        <div class="nav-item" onclick="switchTab('historial')"><i class="fa-solid fa-calendar-days"></i>Historial</div>
+        <div class="nav-item" onclick="switchTab('perfil')"><i class="fa-solid fa-user"></i>Perfil</div>
     </div>
 
-    <div class="loader text-info" id="global-loader"><div class="spinner-border"></div><p class="mt-2" id="loader-text">Conectando...</p></div>
+    <div class="loader text-info" id="global-loader"><div class="spinner-border"></div></div>
 
 </div>
 
@@ -173,214 +148,160 @@
     // ========================================================
     // ⚠️ REEMPLAZA ESTA URL CON LA DE TU APPS SCRIPT NUEVO
     // ========================================================
-    const API_URL = 'https://script.google.com/macros/s/AKfycby6PO2WYVBkOImBoHtylUFiY4XTBG4FVV9XbATybdsZlehJqE3OxItGWJXDzilCLlHr3A/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbz4_T5B0dW0qdirX_9WGNOKUn3DMMfv4rJ5AUQE73mT1W4i7yTx6C4vAaYRhw2ym5QrnA/exec';
 
     let selectedEnergy = 2;
     let currentUser = null;
+    let waterCount = 0;
+    let timers = {};
 
     window.onload = function() {
         const session = localStorage.getItem('vitalcheck_session');
-        if (session) {
-            currentUser = JSON.parse(session);
-            initMainApp();
-        } else {
-            showScreen('login');
-        }
+        if (session) { currentUser = JSON.parse(session); initMainApp(); } 
+        else { showScreen('login'); }
     };
 
     function showScreen(screenId) {
-        document.getElementById('login-section').classList.add('d-none');
-        document.getElementById('register-section').classList.add('d-none');
-        document.getElementById('recover-section').classList.add('d-none');
+        document.getElementById('auth-sections').classList.add('d-none');
         document.getElementById('main-app-section').classList.add('d-none');
-        document.getElementById('nav-bar').classList.add('d-none');
         document.getElementById('global-loader').style.display = 'none';
-        if(screenId) document.getElementById(screenId + '-section').classList.remove('d-none');
+        if(screenId === 'login' || screenId === 'register') {
+            document.getElementById('auth-sections').classList.remove('d-none');
+            document.getElementById('login-section').classList.toggle('d-none', screenId !== 'login');
+            document.getElementById('register-section').classList.toggle('d-none', screenId !== 'register');
+        }
     }
 
     function switchTab(tabId) {
-        document.getElementById('tab-chequeo').classList.add('d-none');
-        document.getElementById('tab-historial').classList.add('d-none');
-        document.getElementById('tab-perfil').classList.add('d-none');
+        ['chequeo', 'ejercicios', 'nutricion', 'historial', 'perfil'].forEach(t => document.getElementById('tab-' + t).classList.add('d-none'));
         document.getElementById('tab-' + tabId).classList.remove('d-none');
-        
-        const items = document.querySelectorAll('.nav-item');
-        items.forEach(i => i.classList.remove('active'));
-        
-        const index = tabId === 'chequeo' ? 0 : tabId === 'historial' ? 1 : 2;
-        items[index].classList.add('active');
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        event.currentTarget.classList.add('active');
 
         if(tabId === 'historial') loadHistorial();
-        if(tabId === 'perfil') loadPerfilData();
+        if(tabId === 'ejercicios') loadEjercicios();
     }
 
-    function selectEnergyOption(element) {
+    function selectOpt(type, element) {
         element.parentElement.querySelectorAll('.option-item').forEach(opt => opt.classList.remove('active'));
         element.classList.add('active');
         selectedEnergy = element.getAttribute('data-val');
     }
 
     function login() {
-        const correo = document.getElementById('login-email').value;
-        const password = document.getElementById('login-pass').value;
-        if(!correo || !password) return alert("Completa todos los campos.");
-        showLoader("Verificando accesos...");
-        
-        enviarPeticion({ accion: 'login', correo, password }, function(data) {
-            if(data.exito) {
-                localStorage.setItem('vitalcheck_session', JSON.stringify(data.usuario));
-                currentUser = data.usuario;
-                initMainApp();
-            } else {
-                alert(data.mensaje);
-                showScreen('login');
-            }
-        });
-    }
-
-    function register() {
-        const nombre = document.getElementById('reg-name').value;
-        const correo = document.getElementById('reg-email').value;
-        const password = document.getElementById('reg-pass').value;
-        const edad = document.getElementById('reg-age').value;
-        const peso = document.getElementById('reg-weight').value;
-        const telefono = document.getElementById('reg-phone').value;
-        const objetivo = document.getElementById('reg-goal').value;
-
-        if(!nombre || !correo || !password) return alert("Llena los campos obligatorios.");
-        showLoader("Registrando...");
-
-        enviarPeticion({ accion: 'registro', nombre, correo, password, edad, peso, telefono, objetivo }, function(data) {
-            if(data.exito) {
-                localStorage.setItem('vitalcheck_session', JSON.stringify(data.usuario));
-                currentUser = data.usuario;
-                initMainApp();
-            } else {
-                alert(data.mensaje);
-                showScreen('register');
-            }
-        });
-    }
-
-    function recoverPassword() {
-        const correo = document.getElementById('recover-email').value;
-        if(!correo) return alert("Escribe tu correo.");
-        showLoader("Buscando tu cuenta...");
-        enviarPeticion({ accion: 'recover', correo: correo }, function(data) {
-            alert(data.mensaje);
-            showScreen('login');
+        const correo = document.getElementById('login-email').value, password = document.getElementById('login-pass').value;
+        if(!correo || !password) return; showLoader();
+        enviarPeticion({ accion: 'login', correo, password }, data => {
+            if(data.exito) { localStorage.setItem('vitalcheck_session', JSON.stringify(data.usuario)); currentUser = data.usuario; initMainApp(); }
+            else { alert(data.mensaje); showScreen('login'); }
         });
     }
 
     function initMainApp() {
         showScreen('main-app');
+        document.getElementById('main-app-section').classList.remove('d-none');
         document.getElementById('nav-bar').classList.remove('d-none');
         document.getElementById('welcome-user').innerText = `Hola, ${currentUser.nombre}`;
-        switchTab('chequeo');
-        resetChequeoForm();
         
-        fetch(API_URL).then(res => res.json()).then(data => {
-            document.getElementById('frase-container').innerHTML = `"${data.frase}"`;
-        }).catch(() => {
-            document.getElementById('frase-container').innerHTML = '"Paso a paso construyes tu bienestar."';
+        // Cargar Historial ocultamente para sacar la racha
+        enviarPeticion({ accion: 'historial', correoUsuario: currentUser.correo }, data => {
+            if(data.exito) document.getElementById('streak-counter').innerText = data.racha || 0;
         });
     }
 
+    /* === MÓDULO DE RUTINAS === */
     function processChequeo() {
-        const pain = document.getElementById('pain-area').value;
-        showLoader("Guardando chequeo...");
-        
-        enviarPeticion({ accion: 'chequeo', correoUsuario: currentUser.correo, energia: selectedEnergy, dolor: pain, notas: "Móvil" }, function(data) {
-            showScreen('main-app');
-            document.getElementById('nav-bar').classList.remove('d-none');
-            document.getElementById('form-section').classList.add('d-none');
+        showLoader();
+        enviarPeticion({ accion: 'chequeo', correoUsuario: currentUser.correo, energia: selectedEnergy, dolor: document.getElementById('pain-area').value }, data => {
+            document.getElementById('global-loader').style.display = 'none';
             document.getElementById('results-section').classList.remove('d-none');
-            
-            const list = document.getElementById('exercise-list');
-            list.innerHTML = "";
-            if(!data.ejercicios || data.ejercicios.length === 0) {
-                list.innerHTML = "<div class='glass-card text-center'>Hoy toca descanso total. 🧘‍♂️</div>";
-                return;
-            }
-            data.ejercicios.forEach(ex => {
-                list.innerHTML += `
-                    <div class="exercise-card">
-                        <div class="exercise-info"><h6>${ex.nombre}</h6><span><i class="fa-solid fa-tag me-1"></i>${ex.zona}</span></div>
-                        ${ex.link ? `<a href="${ex.link}" target="_blank" class="btn-play"><i class="fa-solid fa-play"></i></a>` : ''}
-                    </div>`;
-            });
+            renderExercises(data.ejercicios, 'daily-exercise-list');
         });
     }
 
+    /* === MÓDULO DE EJERCICIOS Y CRONÓMETRO === */
+    function loadEjercicios() {
+        document.getElementById('all-exercises-list').innerHTML = "<div class='text-center'><i class='fa-solid fa-spinner fa-spin'></i></div>";
+        enviarPeticion({ accion: 'obtenerEjerciciosTodo' }, data => {
+            renderExercises(data.ejercicios, 'all-exercises-list');
+        });
+    }
+
+    function renderExercises(lista, containerId) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = "";
+        lista.forEach((ex, index) => {
+            const uid = containerId + '-' + index;
+            container.innerHTML += `
+                <div class="exercise-card">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div><h6 class="mb-0 text-white fw-bold">${ex.nombre}</h6><span class="small text-info"><i class="fa-solid fa-tag me-1"></i>${ex.zona}</span></div>
+                        ${ex.link ? `<a href="${ex.link}" target="_blank" class="btn-play"><i class="fa-solid fa-video"></i></a>` : ''}
+                    </div>
+                    <div id="timer-display-${uid}" class="timer-display d-none">00:${ex.tiempo < 10 ? '0'+ex.tiempo : ex.tiempo}</div>
+                    <button id="btn-timer-${uid}" class="btn btn-sm btn-outline-warning w-100 mt-2" onclick="startTimer('${uid}', ${ex.tiempo})"><i class="fa-solid fa-stopwatch me-2"></i>Iniciar ${ex.tiempo}s</button>
+                </div>`;
+        });
+    }
+
+    function startTimer(uid, seconds) {
+        if(timers[uid]) clearInterval(timers[uid]); // Detener si ya corría
+        document.getElementById(`btn-timer-${uid}`).classList.add('d-none');
+        const display = document.getElementById(`timer-display-${uid}`);
+        display.classList.remove('d-none');
+        
+        let timeLeft = seconds;
+        display.innerText = `00:${timeLeft < 10 ? '0'+timeLeft : timeLeft}`;
+        
+        timers[uid] = setInterval(() => {
+            timeLeft--;
+            display.innerText = `00:${timeLeft < 10 ? '0'+timeLeft : timeLeft}`;
+            if(timeLeft <= 0) {
+                clearInterval(timers[uid]);
+                display.innerText = "¡TIEMPO!";
+                display.classList.replace('text-warning', 'text-success');
+                // Opcional: Reproducir un sonido de beep aquí si lo deseas
+            }
+        }, 1000);
+    }
+
+    /* === MÓDULO DE NUTRICIÓN === */
+    function updateWater(val) {
+        waterCount += val;
+        if(waterCount < 0) waterCount = 0;
+        document.getElementById('water-display').innerText = waterCount;
+    }
+
+    function saveNutrition() {
+        showLoader();
+        const comida = document.getElementById('food-quality').value;
+        enviarPeticion({ accion: 'guardarNutricion', correoUsuario: currentUser.correo, agua: waterCount, comida: comida }, data => {
+            document.getElementById('global-loader').style.display = 'none';
+            alert(data.mensaje);
+            waterCount = 0; document.getElementById('water-display').innerText = waterCount; // Reset visual
+        });
+    }
+
+    /* === MÓDULO DE HISTORIAL === */
     function loadHistorial() {
         const container = document.getElementById('historial-list');
-        container.innerHTML = "<div class='text-center p-3'><i class='fa-solid fa-spinner fa-spin'></i> Leyendo tu historial...</div>";
-        
-        enviarPeticion({ accion: 'historial', correoUsuario: currentUser.correo }, function(data) {
+        container.innerHTML = "<div class='text-center'><i class='fa-solid fa-spinner fa-spin'></i></div>";
+        enviarPeticion({ accion: 'historial', correoUsuario: currentUser.correo }, data => {
             container.innerHTML = "";
-            if(!data.historial || data.historial.length === 0) {
-                container.innerHTML = "<p class='text-muted text-center'>Aún no tienes chequeos guardados.</p>";
-                return;
-            }
             data.historial.forEach(h => {
-                container.innerHTML += `
-                    <div class="historial-item">
-                        <div><strong class="text-info">${h.fecha}</strong><br><small class="text-muted">Molestia: ${h.dolor}</small></div>
-                        <span class="badge ${h.energia==='Alta'?'bg-success':h.energia==='Media'?'bg-warning':'bg-danger'}">Energía ${h.energia}</span>
-                    </div>`;
+                container.innerHTML += `<div class="glass-card p-3 mb-2 d-flex justify-content-between align-items-center">
+                    <div><strong class="text-info">${h.fecha}</strong><br><small class="text-muted">${h.dolor}</small></div>
+                    <span class="badge bg-secondary">${h.energia}</span>
+                </div>`;
             });
         });
     }
 
-    function loadPerfilData() {
-        document.getElementById('perf-email').value = currentUser.correo;
-        document.getElementById('perf-weight').value = currentUser.peso || "";
-        document.getElementById('perf-goal').value = currentUser.objetivo || "Mejorar salud general";
-    }
-
-    function updateProfile() {
-        const peso = document.getElementById('perf-weight').value;
-        const objetivo = document.getElementById('perf-goal').value;
-        showLoader("Actualizando perfil...");
-        
-        enviarPeticion({ accion: 'actualizarPerfil', correoUsuario: currentUser.correo, peso, objetivo }, function(data) {
-            if(data.exito) {
-                currentUser.peso = peso;
-                currentUser.objetivo = objetivo;
-                localStorage.setItem('vitalcheck_session', JSON.stringify(currentUser));
-                alert("¡Perfil guardado con éxito!");
-            } else {
-                alert("Error al actualizar.");
-            }
-            initMainApp();
-            switchTab('perfil');
-        });
-    }
-
-    function resetChequeoForm() {
-        document.getElementById('form-section').classList.remove('d-none');
-        document.getElementById('results-section').classList.add('d-none');
-    }
-
-    function logout() {
-        localStorage.removeItem('vitalcheck_session');
-        currentUser = null;
-        location.reload();
-    }
-
-    function enviarPeticion(payload, callback) {
-        fetch(API_URL, { method: 'POST', body: JSON.stringify(payload), headers: { 'Content-Type': 'text/plain;charset=utf-8' } })
-        .then(res => res.json()).then(data => callback(data))
-        .catch(() => {
-            alert("Error de conexión.");
-            location.reload();
-        });
-    }
-
-    function showLoader(text) {
-        showScreen(null);
-        document.getElementById('global-loader').style.display = 'block';
-        document.getElementById('loader-text').innerText = text;
+    function logout() { localStorage.removeItem('vitalcheck_session'); location.reload(); }
+    function showLoader() { document.getElementById('global-loader').style.display = 'block'; }
+    function enviarPeticion(payload, cb) {
+        fetch(API_URL, { method: 'POST', body: JSON.stringify(payload), headers: { 'Content-Type': 'text/plain;charset=utf-8' }})
+        .then(res => res.json()).then(cb).catch(() => { alert("Error de conexión"); document.getElementById('global-loader').style.display = 'none'; });
     }
 </script>
 </body>
