@@ -10,7 +10,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         :root { --primary-bg: #0f172a; --accent-color: #38bdf8; --glass-bg: rgba(255, 255, 255, 0.05); --glass-border: rgba(255, 255, 255, 0.1); }
@@ -22,13 +21,9 @@
         .nav-item.active { color: var(--accent-color); }
         .nav-item i { font-size: 1.2rem; display: block; margin-bottom: 3px; }
         .form-control, .form-select { background: rgba(255,255,255,0.05) !important; color: white !important; border: 1px solid var(--glass-border); border-radius: 10px; }
-        
-        /* Acordeón de Comida */
         .accordion-button { background-color: rgba(74, 222, 128, 0.1) !important; color: #4ade80 !important; font-weight: bold; border-radius: 10px !important; }
         .accordion-item { background: transparent; border: none; margin-bottom: 10px; }
         .accordion-body { background: rgba(0,0,0,0.2); border-radius: 0 0 10px 10px; color: #cbd5e1; white-space: pre-line; font-size: 0.9rem; }
-        
-        /* Rutinas Ilustradas */
         .ex-img { width: 50px; height: 50px; border-radius: 10px; background: white; padding: 5px; margin-right: 15px; }
     </style>
 </head>
@@ -102,13 +97,19 @@
                 <button class="btn btn-sm btn-info w-100 mb-4" onclick="updateProfile()">Guardar Cambios de Perfil</button>
                 <hr style="border-color: rgba(255,255,255,0.1)">
                 
-                <h5 class="text-warning mt-3"><i class="fa-solid fa-bell me-2"></i>Recordatorios</h5>
-                <button class="btn btn-sm btn-outline-warning w-100 mb-3" onclick="pedirPermisoNotificaciones()">Activar Notificaciones</button>
-                <div class="row text-center mb-3">
-                    <div class="col"><label class="small text-muted">Desayuno</label><input type="time" id="time-desayuno" class="form-control"></div>
-                    <div class="col"><label class="small text-muted">Ejercicio</label><input type="time" id="time-rutina" class="form-control"></div>
+                <h5 class="text-warning mt-3"><i class="fa-solid fa-bell me-2"></i>Mis Recordatorios</h5>
+                <button class="btn btn-sm btn-outline-warning w-100 mb-3" onclick="pedirPermisoNotificaciones()">Activar Notificaciones en Celular</button>
+                
+                <div class="row text-center mb-2">
+                    <div class="col"><label class="small text-muted"><i class="fa-solid fa-utensils text-info"></i> Comida</label><input type="time" id="time-comida" class="form-control"></div>
+                    <div class="col"><label class="small text-muted"><i class="fa-solid fa-droplet text-primary"></i> Agua</label><input type="time" id="time-agua" class="form-control"></div>
                 </div>
-                <button class="btn btn-sm btn-warning w-100" onclick="guardarHorarios()">Guardar Horarios</button>
+                <div class="row text-center mb-3">
+                    <div class="col"><label class="small text-muted"><i class="fa-solid fa-person-walking text-success"></i> Estirar</label><input type="time" id="time-estiramiento" class="form-control"></div>
+                    <div class="col"><label class="small text-muted"><i class="fa-solid fa-pills text-danger"></i> Medicina</label><input type="time" id="time-medicina" class="form-control"></div>
+                </div>
+                
+                <button class="btn btn-sm btn-warning w-100" onclick="guardarHorarios()">Guardar Mis Alarmas</button>
             </div>
             <button class="btn btn-outline-danger w-100 mt-2" onclick="logout()">Cerrar Sesión</button>
         </div>
@@ -126,7 +127,7 @@
     // ===============================================
     // ⚠️ REEMPLAZA ESTA URL CON TU SCRIPT NUEVO
     // ===============================================
-    const API_URL = 'https://script.google.com/macros/s/AKfycbwJb1pK4ZeixIPjYL8bPN-EqG79v9zqsZn60hxS_BBb4pu40zwZGFie3w5uLVr2EL7CRQ/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbwE3oftZvGusVds5M-cQ-FAhiFRMnFGSOVzzHfWo2koPux1xoW-NSK_xjOaGJeO8KS81Q/exec';
 
     let currentUser = null;
     let deferredPrompt;
@@ -143,36 +144,50 @@
         });
     });
 
-    // 2. SISTEMA DE NOTIFICACIONES (HORARIOS)
+    // 2. SISTEMA DE NOTIFICACIONES MÚLTIPLES
     function pedirPermisoNotificaciones() {
         if (!("Notification" in window)) return alert("Tu navegador no soporta notificaciones.");
         Notification.requestPermission().then(p => { if(p === "granted") alert("¡Notificaciones activadas!"); });
     }
     
     function guardarHorarios() {
-        const h = { desayuno: document.getElementById('time-desayuno').value, rutina: document.getElementById('time-rutina').value };
+        const h = { 
+            comida: document.getElementById('time-comida').value, 
+            agua: document.getElementById('time-agua').value,
+            estiramiento: document.getElementById('time-estiramiento').value,
+            medicina: document.getElementById('time-medicina').value
+        };
         localStorage.setItem('vitalcheck_horarios', JSON.stringify(h));
-        alert("Horarios guardados. La app te avisará si la tienes abierta o en segundo plano.");
+        alert("¡Todos tus recordatorios han sido guardados!");
     }
 
-    // Cronómetro interno que revisa la hora cada minuto
+    // El Supervisor de Alarmas (Revisa cada minuto)
     setInterval(() => {
         const horarios = JSON.parse(localStorage.getItem('vitalcheck_horarios'));
         if(!horarios || Notification.permission !== "granted") return;
+        
         const ahora = new Date();
         const horaActual = `${ahora.getHours().toString().padStart(2,'0')}:${ahora.getMinutes().toString().padStart(2,'0')}`;
         
-        if(horaActual === horarios.desayuno) new Notification("VitalCheck", { body: "¡Es hora de tu desayuno saludable!", icon: "https://cdn-icons-png.flaticon.com/192/2966/2966334.png" });
-        if(horaActual === horarios.rutina) new Notification("VitalCheck", { body: "¡Prepárate! Es hora de tu rutina de ejercicio.", icon: "https://cdn-icons-png.flaticon.com/192/2966/2966334.png" });
-    }, 60000); // Revisa cada 60 segundos
+        if(horaActual === horarios.comida) new Notification("VitalCheck", { body: "🍽️ ¡Hora de tu comida saludable!", icon: "https://cdn-icons-png.flaticon.com/192/2966/2966334.png" });
+        if(horaActual === horarios.agua) new Notification("VitalCheck", { body: "💧 Recordatorio: ¡Toma un vaso de agua ahora!", icon: "https://cdn-icons-png.flaticon.com/192/2966/2966334.png" });
+        if(horaActual === horarios.estiramiento) new Notification("VitalCheck", { body: "🧘‍♀️ ¡Levántate y estira tu cuerpo por 5 minutos!", icon: "https://cdn-icons-png.flaticon.com/192/2966/2966334.png" });
+        if(horaActual === horarios.medicina) new Notification("VitalCheck", { body: "💊 ¡No olvides tomar tu medicina a tiempo!", icon: "https://cdn-icons-png.flaticon.com/192/2966/2966334.png" });
+    }, 60000); 
 
     // INICIO APP
     window.onload = function() {
         const session = localStorage.getItem('vitalcheck_session');
         if (session) { currentUser = JSON.parse(session); initMainApp(); }
         
+        // Cargar alarmas guardadas
         const h = JSON.parse(localStorage.getItem('vitalcheck_horarios'));
-        if(h) { document.getElementById('time-desayuno').value = h.desayuno; document.getElementById('time-rutina').value = h.rutina; }
+        if(h) { 
+            document.getElementById('time-comida').value = h.comida || ''; 
+            document.getElementById('time-agua').value = h.agua || ''; 
+            document.getElementById('time-estiramiento').value = h.estiramiento || ''; 
+            document.getElementById('time-medicina').value = h.medicina || ''; 
+        }
     };
 
     function switchTab(tabId) {
@@ -202,7 +217,6 @@
         document.getElementById('perf-goal').value = currentUser.objetivo || "Mejorar salud general";
     }
 
-    // PROCESAR CHEQUEO CON MENÚS Y FOTOS
     function processChequeo() {
         document.getElementById('global-loader').classList.remove('d-none');
         enviarPeticion({ accion: 'chequeo', correoUsuario: currentUser.correo, energia: document.getElementById('energy-area').value, dolor: document.getElementById('pain-area').value, objetivo: currentUser.objetivo }, data => {
@@ -210,7 +224,6 @@
             document.getElementById('form-section').classList.add('d-none');
             document.getElementById('results-section').classList.remove('d-none');
             
-            // Llenar Acordeones de Menú
             document.getElementById('t-desayuno').innerText = data.menu.desayuno.titulo;
             document.getElementById('b-desayuno').innerText = data.menu.desayuno.pasos;
             document.getElementById('t-comida').innerText = data.menu.comida.titulo;
@@ -218,23 +231,26 @@
             document.getElementById('t-cena').innerText = data.menu.cena.titulo;
             document.getElementById('b-cena').innerText = data.menu.cena.pasos;
 
-            // Llenar Rutina con Imágenes
             const container = document.getElementById('daily-exercise-list'); container.innerHTML = "";
-            data.ejercicios.forEach(ex => {
-                container.innerHTML += `
-                <div class="glass-card d-flex align-items-center mb-2 p-2">
-                    <img src="${ex.imagen}" class="ex-img">
-                    <div><h6 class="mb-0">${ex.nombre}</h6><span class="small text-info">${ex.tiempo} segundos</span></div>
-                </div>`;
-            });
+            if(!data.ejercicios || data.ejercicios.length === 0) {
+                container.innerHTML = "<p class='text-muted text-center'>Hoy descansa.</p>";
+            } else {
+                data.ejercicios.forEach(ex => {
+                    container.innerHTML += `
+                    <div class="glass-card d-flex align-items-center mb-2 p-2">
+                        <img src="${ex.imagen}" class="ex-img">
+                        <div><h6 class="mb-0">${ex.nombre}</h6><span class="small text-info">${ex.tiempo} segundos</span></div>
+                    </div>`;
+                });
+            }
         });
     }
 
-    // HISTORIAL Y PERFIL
     function loadHistorial() {
         const c = document.getElementById('historial-list'); c.innerHTML = "<div class='text-center'>Cargando...</div>";
         enviarPeticion({ accion: 'historial', correoUsuario: currentUser.correo }, data => {
             c.innerHTML = "";
+            if(data.historial.length === 0) c.innerHTML = "<p class='text-center text-muted'>Sin historial aún.</p>";
             data.historial.forEach(h => { c.innerHTML += `<div class="glass-card p-3 mb-2 d-flex justify-content-between"><strong class="text-info">${h.fecha}</strong><span>Energía: ${h.energia}</span></div>`; });
         });
     }
@@ -247,7 +263,7 @@
     }
 
     function logout() { localStorage.removeItem('vitalcheck_session'); location.reload(); }
-    function enviarPeticion(payload, cb) { fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) }).then(res => res.json()).then(cb); }
+    function enviarPeticion(payload, cb) { fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) }).then(res => res.json()).then(cb).catch(err => {alert("Error de conexión"); document.getElementById('global-loader').classList.add('d-none');}); }
 </script>
 </body>
 </html>
